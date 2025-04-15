@@ -1,0 +1,14 @@
+name: borrelia-env
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - snakemake
+  - panaroo
+  - blast
+  - biopython
+  - seqtk
+  - bedtools
+  - mafft
