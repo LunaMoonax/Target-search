@@ -15,13 +15,12 @@ rule all:
         expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/{sample}/{sample}_prokka/{sample}.gff", sample=samples.keys()),
         "results/panaroo/core_gene_alignment.aln",
         "results/panaroo/gene_presence_absence.csv",
+        "results/panaroo/core_gene_alignment_filtered.aln",
         expand("results/blastdb/{contaminant}.nin", contaminant=contaminants),
-        expand("results/blast/{contaminant}.tsv", contaminant=contaminants),
-        "results/clean_core_genes.txt",
-        "results/panaroo/filtered_core_genes.fa",
         "results/tigr_grna_18mers.tsv",
         "results/blast/tigr/all_hits.tsv",
-        "results/final_filtered_tigr_grna.tsv"
+        "results/final_filtered_tigr_grna.tsv",
+        "results/tigr_grna_summary.txt"
 
 rule prokka:
     input:
@@ -55,14 +54,104 @@ rule panaroo:
     output:
         aln = "results/panaroo/core_gene_alignment.aln",
         genes = "results/panaroo/gene_presence_absence.csv",
-        ref = "results/panaroo/pan_genome_reference.fa"
+        filtered = "results/panaroo/core_gene_alignment_filtered.aln"
     threads: 4
     conda: "envs/borrelia-env.yaml"
     shell:
         """
         panaroo -i {input.gff} -o results/panaroo --clean-mode strict \
-        -a core --aligner mafft -t {threads}
+            -a core --aligner mafft -t {threads}
         """
+
+rule extract_tigr_grna:
+    input:
+        aln = "results/panaroo/core_gene_alignment_filtered.aln"
+    output:
+        grna = "results/tigr_grna_18mers.tsv"
+    run:
+        from Bio import AlignIO
+        import re
+
+        def is_valid_seed(spacer):
+            seed = spacer[3:6]
+            return all(base in "ACGT" for base in seed)
+
+        def gc_content(seq):
+            gc = sum(1 for base in seq if base in "GC")
+            return gc / len(seq)
+
+        def is_good_sequence(seq):
+            if not set(seq).issubset(set("ACGT")):
+                return False
+            if gc_content(seq) < 0.35 or gc_content(seq) > 0.65:
+                return False
+            if re.search(r'(A{4,}|T{4,}|C{4,}|G{4,})', seq):
+                return False
+            return True
+
+        alignment = AlignIO.read(input.aln, "fasta")
+        aln_len = alignment.get_alignment_length()
+
+        print(f"Total alignment length: {aln_len}")
+        print(f"Number of genomes: {len(alignment)}")
+
+        total_windows = 0
+        gap_filtered = 0
+        conserved = 0
+        passed_seed = 0
+        passed_gc = 0
+        written = 0
+
+        with open(output.grna, "w") as out:
+            out.write("gene_id\tstart\tspacerA\tspacerB\tcombined_18mer\n")
+
+            for i in range(aln_len - 17):
+                total_windows += 1
+                window_seqs = [str(rec.seq[i:i+18]).upper() for rec in alignment]
+
+                if any("-" in seq for seq in window_seqs):
+                    gap_filtered += 1
+                    continue
+
+                if len(set(window_seqs)) != 1:
+                    conserved += 1
+                    continue
+
+                tig = window_seqs[0]
+                spacerA = tig[:9]
+                spacerB = tig[9:]
+
+                if not (is_valid_seed(spacerA) and is_valid_seed(spacerB)):
+                    continue
+                passed_seed += 1
+
+                if not is_good_sequence(tig):
+                    continue
+                passed_gc += 1
+
+                out.write(f"conserved_block\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\n")
+                written += 1
+
+        print("=== TIGR gRNA Extraction Report ===")
+        print(f"Total 18-mer windows scanned: {total_windows}")
+        print(f"Skipped due to gaps: {gap_filtered}")
+        print(f"Skipped due to non-conservation: {conserved}")
+        print(f"Passed seed region filter: {passed_seed}")
+        print(f"Passed GC/homopolymer filter: {passed_gc}")
+        print(f"Written to file: {written}")
+
+
+rule build_conserved_18mer_fasta:
+    input:
+        grna = "results/tigr_grna_18mers.tsv"
+    output:
+        fa = "results/panaroo/conserved_18mers.fa"
+    run:
+        with open(input.grna) as tsv, open(output.fa, "w") as out:
+            next(tsv)
+            for line in tsv:
+                fields = line.strip().split("\t")
+                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
 
 rule make_blast_db:
     input:
@@ -74,50 +163,57 @@ rule make_blast_db:
         makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.contaminant}
         """
 
-rule blast_core_genes:
+rule blast_tigr_grna_all:
     input:
-        query = "results/panaroo/pan_genome_reference.fa",
-        db = "results/blastdb/{contaminant}.nin"
+        grna = "results/panaroo/conserved_18mers.fa",
+        dbs = expand("results/blastdb/{contaminant}.nin", contaminant=contaminants)
     output:
-        "results/blast/{contaminant}.tsv"
-    shell:
-        """
-        blastn -query {input.query} -db results/blastdb/{wildcards.contaminant} \
-        -evalue 1 -outfmt 6 -out {output}
-        """
+        "results/blast/tigr/all_hits.tsv"
+    run:
+        import subprocess
+        from pathlib import Path
+        grna_fa = input.grna
+        all_hits = ""
+        for db_path in input.dbs:
+            cmd = f"blastn -query {grna_fa} -db {db_path[:-4]} -task blastn-short -word_size 7 -evalue 1e-5 -outfmt 6"
+            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            all_hits += hits.stdout
+        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
+        with open(output[0], "w") as out:
+            out.write(all_hits)
 
-rule filter_clean_genes:
+rule filter_tigr_grna_hits:
     input:
-        core_genes = "results/panaroo/pan_genome_reference.fa",
-        blast_hits = expand("results/blast/{contaminant}.tsv", contaminant=contaminants)
+        grna = "results/tigr_grna_18mers.tsv",
+        hits = "results/blast/tigr/all_hits.tsv"
     output:
-        "results/clean_core_genes.txt"
+        "results/final_filtered_tigr_grna.tsv"
     run:
         contaminated = set()
-        for blast_file in input.blast_hits:
-            with open(blast_file) as f:
-                for line in f:
-                    contaminated.add(line.strip().split("\t")[0])
-        with open(input.core_genes) as fasta, open(output[0], "w") as out:
-            for line in fasta:
-                if line.startswith(">"):
-                    gene = line.strip()[1:]
-                    if gene not in contaminated:
-                        out.write(gene + "\n")
+        with open(input.hits) as f:
+            for line in f:
+                query = line.split("\t")[0]
+                contaminated.add(query)
+        with open(input.grna) as grna_in, open(output[0], "w") as out:
+            header = grna_in.readline()
+            out.write(header)
+            for line in grna_in:
+                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
+                if gid not in contaminated:
+                    out.write(line)
 
-rule extract_clean_sequences:
+rule summarize_grnas:
     input:
-        genes = "results/clean_core_genes.txt",
-        fasta = "results/panaroo/pan_genome_reference.fa"
+        all_grnas = "results/tigr_grna_18mers.tsv",
+        filtered = "results/final_filtered_tigr_grna.tsv"
     output:
-        "results/panaroo/filtered_core_genes.fa"
+        "results/tigr_grna_summary.txt"
     run:
-        from Bio import SeqIO
-        with open(input.genes) as f:
-            keep = set(line.strip() for line in f)
-        with open(output[0], "w") as out_fa:
-            for record in SeqIO.parse(input.fasta, "fasta"):
-                if record.id in keep:
-                    SeqIO.write(record, out_fa, "fasta")
-
+        with open(input.all_grnas) as a:
+            total = sum(1 for _ in a) - 1
+        with open(input.filtered) as f:
+            final = sum(1 for _ in f) - 1
+        with open(output[0], "w") as out:
+            out.write(f"Total gRNA candidates: {total}\n")
+            out.write(f"Filtered (contaminants removed): {final}\n")
 
