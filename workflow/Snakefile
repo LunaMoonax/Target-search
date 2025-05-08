@@ -2,55 +2,89 @@ import glob
 import os
 
 samples = {
-    "B_afzelii_PKo": {"strain": "PKo", "species": "Borrelia afzelii", "genus": "Borrelia"},
-    "B_burgdorferi_PAbe": {"strain": "PAbe", "species": "Borrelia burgdorferi", "genus": "Borrelia"},
-    "B_bavariensis_PBi": {"strain": "PBi", "species": "Borrelia bavariensis", "genus": "Borrelia"},
-    "B_garinii_PBes": {"strain": "PBes", "species": "Borrelia garinii", "genus": "Borrelia"}
+    "B_afzelii_PKo": "Borrelia",
+    "B_afzelii_BO23": "Borrelia",
+    "B_afzelii_K78": "Borrelia",
+    "B_afzelii_Tom3107": "Borrelia",
+    "B_burgdorferi_PAbe": "Borrelia",
+    "B_burgdorferi_B31": "Borrelia",
+    "B_burgdorferi_NE5248": "Borrelia",
+    "B_burgdorferi_PFheI": "Borrelia",
+    "B_bavariensis_PBi": "Borrelia",
+    "B_bavariensis_PBaell": "Borrelia",
+    "B_bavariensis_NT24": "Borrelia",
+    "B_garinii_PBes": "Borrelia",
+    "B_garinii_20047": "Borrelia",
+    "B_garinii_BgVir": "Borrelia",
+    "B_garinii_NT31": "Borrelia",
+    "B_divergens_CCSG02": "Babesia",
+    "B_divergens_JAHBMH01": "Babesia",
+    "B_duncani_WA1": "Babesia",
+    "B_microti_RI": "Babesia"
 }
 
-contaminants = ["Ixodes", "Midichloria", "Rickettsiella", "Spiroplasma"]
+contaminants = {
+    "Ixodes_CAYQID01": "Ixodes",
+    "Ixodes_CharlesRiver": "Ixodes",
+    "Ixodes_Maya1009": "Ixodes",
+    "Ixodes_Murphy0812": "Ixodes",
+    "Ixodes_PV-2024": "Ixodes",
+    "Midichloria_Ird3Mm": "Midichloria",
+    "Midichloria_IricVA": "Midichloria",
+    "Rickettsiella_32cd738c": "Rickettsiella",
+    "Rickettsiella_54705": "Rickettsiella",
+    "Rickettsiella_54706": "Rickettsiella",
+    "Rickettsiella_54707": "Rickettsiella",
+    "Rickettsiella_63004e16": "Rickettsiella",
+    "Rickettsiella_Ap-RA04": "Rickettsiella",
+    "Rickettsiella_DGE": "Rickettsiella",
+    "Spiroplasma_SHM": "Spiroplasma",
+    "Spiroplasma_Y32": "Spiroplasma",
+    "Spiroplasma_sAp269": "Spiroplasma"
+}
+
+sample_genus_pairs = [(s, g) for s, g in samples.items()]
+borrelia_samples = [s for s, g in sample_genus_pairs if g == "Borrelia"]
+babesia_samples = [s for s, g in sample_genus_pairs if g == "Babesia"]
+contaminant_pairs = [(strain, group) for strain, group in contaminants.items()]
+contaminant_strains = [s for s, _ in contaminant_pairs]
 
 rule all:
     input:
-        expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/{sample}/{sample}_prokka/{sample}.gff", sample=samples.keys()),
-        "results/panaroo/core_gene_alignment.aln",
-        "results/panaroo/gene_presence_absence.csv",
+        expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka/{sample}.gff",
+               zip, sample=[s for s, g in sample_genus_pairs], genus=[g for s, g in sample_genus_pairs]),
         "results/panaroo/core_gene_alignment_filtered.aln",
-        expand("results/blastdb/{contaminant}.nin", contaminant=contaminants),
         "results/tigr_grna_18mers.tsv",
-        "results/blast/tigr/all_hits.tsv",
+        "results/panaroo/conserved_18mers.fa",
+        expand("results/blastdb/{strain}.nin", strain=babesia_samples + contaminant_strains),
+        "results/blast/tigr/babesia_hits.tsv",
+        "results/shared_tigr_grna.tsv",
+        "results/blast/tigr/contaminant_hits.tsv",
         "results/final_filtered_tigr_grna.tsv",
         "results/tigr_grna_summary.txt"
 
 rule prokka:
     input:
-        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/{wc.sample}/{wc.sample}.fna"
+        fasta = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}.fna"
     output:
-        gff = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{sample}/{sample}_prokka/{sample}.gff"
+        gff = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka/{sample}.gff"
     params:
-        outdir = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/{wc.sample}/{wc.sample}_prokka",
-        prefix = lambda wc: wc.sample,
-        genus = lambda wc: samples[wc.sample]["genus"],
-        species = lambda wc: samples[wc.sample]["species"],
-        strain = lambda wc: samples[wc.sample]["strain"]
+        outdir = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka"
     threads: 4
     conda: "envs/borrelia-env.yaml"
     shell:
         """
         prokka {input.fasta} \
             --outdir {params.outdir} \
-            --prefix {params.prefix} \
-            --genus "{params.genus}" \
-            --species "{params.species}" \
-            --strain "{params.strain}" \
-            --usegenus \
+            --prefix {wildcards.sample} \
+            --genus {wildcards.genus} \
             --cpus {threads} \
-            --force
+            --usegenus --force
         """
 
 rule panaroo:
     input:
-        gff = expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/{sample}/{sample}_prokka/{sample}.gff", sample=samples.keys())
+        gffs = expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/{sample}/{sample}_prokka/{sample}.gff", sample=borrelia_samples)
     output:
         aln = "results/panaroo/core_gene_alignment.aln",
         genes = "results/panaroo/gene_presence_absence.csv",
@@ -59,10 +93,10 @@ rule panaroo:
     conda: "envs/borrelia-env.yaml"
     shell:
         """
-        panaroo -i {input.gff} -o results/panaroo --clean-mode strict \
+        panaroo -i {input.gffs} -o results/panaroo --clean-mode strict \
             -a core --aligner mafft -t {threads}
         """
-
+        
 rule extract_tigr_grna:
     input:
         aln = "results/panaroo/core_gene_alignment_filtered.aln"
@@ -153,39 +187,112 @@ rule build_conserved_18mer_fasta:
                 fields = line.strip().split("\t")
                 out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
 
-rule make_blast_db:
+rule make_blast_db_babesia:
     input:
-        fasta = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{contaminant}/{contaminant}.fna"
+        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/{wc.strain}/{wc.strain}.fna"
     output:
-        db = "results/blastdb/{contaminant}.nin"
+        db = "results/blastdb/{strain}.nin"
     shell:
         """
-        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.contaminant}
+        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
         """
 
-rule blast_tigr_grna_all:
+rule blast_tigr_grna_babesia:
     input:
         grna = "results/panaroo/conserved_18mers.fa",
-        dbs = expand("results/blastdb/{contaminant}.nin", contaminant=contaminants)
+        dbs = expand("results/blastdb/{strain}.nin", strain=babesia_samples)
     output:
-        "results/blast/tigr/all_hits.tsv"
+        "results/blast/tigr/babesia_hits.tsv"
     run:
         import subprocess
         from pathlib import Path
         grna_fa = input.grna
         all_hits = ""
         for db_path in input.dbs:
-            cmd = f"blastn -query {grna_fa} -db {db_path[:-4]} -task blastn-short -word_size 7 -evalue 1e-5 -outfmt 6"
+            cmd = f"blastn -query {grna_fa} -db {db_path[:-4]} -task blastn-short -word_size 7 -perc_identity 95 -evalue 1e-3 -outfmt 6"
             hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
             all_hits += hits.stdout
         Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
         with open(output[0], "w") as out:
             out.write(all_hits)
 
-rule filter_tigr_grna_hits:
+rule select_shared_tigr_grna_with_babesia:
     input:
         grna = "results/tigr_grna_18mers.tsv",
-        hits = "results/blast/tigr/all_hits.tsv"
+        babesia_hits = "results/blast/tigr/babesia_hits.tsv"
+    output:
+        "results/shared_tigr_grna.tsv"
+    run:
+        from collections import defaultdict
+
+        # Track which gRNAs matched which Babesia strain
+        hit_map = defaultdict(set)
+
+        with open(input.babesia_hits) as f:
+            for line in f:
+                fields = line.strip().split("\t")
+                query = fields[0]  # gRNA ID (e.g. conserved_block_3_103)
+                db = fields[1]     # subject ID — includes strain info
+                hit_map[query].add(db)
+
+        # Count how many unique Babesia strains
+        expected_strains = set(s.replace("results/blastdb/", "").replace(".nin", "") for s in babesia_samples)
+
+        # Determine which gRNAs matched all strains
+        shared = set()
+        for grna_id, strains in hit_map.items():
+            if len(strains) == len(babesia_samples):
+                shared.add(grna_id)
+
+        with open(input.grna) as grna_in, open(output[0], "w") as out:
+            header = grna_in.readline()
+            out.write(header)
+            for line in grna_in:
+                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
+                if gid in shared:
+                    out.write(line)         
+
+rule make_blast_db:
+    input:
+        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/{contaminants[wc.strain]}/{wc.strain}.fna"
+    output:
+        db = "results/blastdb/{strain}.nin"
+    shell:
+        """
+        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
+        """
+
+rule blast_shared_grna_against_contaminants:
+    input:
+        grna = "results/shared_tigr_grna.tsv",
+        dbs = expand("results/blastdb/{strain}.nin", strain=contaminant_strains)
+    output:
+        "results/blast/tigr/contaminant_hits.tsv"
+    run:
+        import subprocess
+        from pathlib import Path
+
+        fasta_file = "results/shared_18mers_temp.fa"
+        with open(input.grna) as tsv, open(fasta_file, "w") as out:
+            next(tsv)
+            for line in tsv:
+                fields = line.strip().split("\t")
+                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
+
+        all_hits = ""
+        for db_path in input.dbs:
+            cmd = f"blastn -query {fasta_file} -db {db_path[:-4]} -task blastn-short -word_size 7 -perc_identity 90 -evalue 1e-2 -outfmt 6"
+            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            all_hits += hits.stdout
+
+        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
+        with open(output[0], "w") as out:
+            out.write(all_hits)
+
+rule filter_tigr_grna_hits:
+    input:
+        grna = "results/shared_tigr_grna.tsv",
+        hits = "results/blast/tigr/contaminant_hits.tsv"
     output:
         "results/final_filtered_tigr_grna.tsv"
     run:
@@ -204,7 +311,7 @@ rule filter_tigr_grna_hits:
 
 rule summarize_grnas:
     input:
-        all_grnas = "results/tigr_grna_18mers.tsv",
+        all_grnas = "results/shared_tigr_grna.tsv",
         filtered = "results/final_filtered_tigr_grna.tsv"
     output:
         "results/tigr_grna_summary.txt"
@@ -216,4 +323,3 @@ rule summarize_grnas:
         with open(output[0], "w") as out:
             out.write(f"Total gRNA candidates: {total}\n")
             out.write(f"Filtered (contaminants removed): {final}\n")
-

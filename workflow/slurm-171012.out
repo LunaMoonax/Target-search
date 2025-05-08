@@ -1,0 +1,1164 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job stats:
+job                                       count
+--------------------------------------  -------
+all                                           1
+blast_shared_grna_against_contaminants        1
+blast_tigr_grna_babesia                       1
+build_conserved_18mer_fasta                   1
+extract_tigr_grna                             1
+filter_tigr_grna_hits                         1
+make_blast_db                                17
+make_blast_db_babesia                         4
+panaroo                                       1
+select_shared_tigr_grna_with_babesia          1
+summarize_grnas                               1
+total                                        30
+
+Select jobs to execute...
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db_babesia:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_JAHBMH01/B_divergens_JAHBMH01.fna
+    output: results/blastdb/B_divergens_JAHBMH01.nin
+    jobid: 24
+    reason: Missing output files: results/blastdb/B_divergens_JAHBMH01.nin
+    wildcards: strain=B_divergens_JAHBMH01
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_JAHBMH01/B_divergens_JAHBMH01.fna -dbtype nucl -out results/blastdb/B_divergens_JAHBMH01
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_PV-2024.fna
+    output: results/blastdb/Ixodes_PV-2024.nin
+    jobid: 31
+    reason: Missing output files: results/blastdb/Ixodes_PV-2024.nin
+    wildcards: strain=Ixodes_PV-2024
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_PV-2024.fna -dbtype nucl -out results/blastdb/Ixodes_PV-2024
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_IricVA.fna
+    output: results/blastdb/Midichloria_IricVA.nin
+    jobid: 33
+    reason: Missing output files: results/blastdb/Midichloria_IricVA.nin
+    wildcards: strain=Midichloria_IricVA
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_IricVA.fna -dbtype nucl -out results/blastdb/Midichloria_IricVA
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_DGE.fna
+    output: results/blastdb/Rickettsiella_DGE.nin
+    jobid: 40
+    reason: Missing output files: results/blastdb/Rickettsiella_DGE.nin
+    wildcards: strain=Rickettsiella_DGE
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_DGE.fna -dbtype nucl -out results/blastdb/Rickettsiella_DGE
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CAYQID01.fna
+    output: results/blastdb/Ixodes_CAYQID01.nin
+    jobid: 27
+    reason: Missing output files: results/blastdb/Ixodes_CAYQID01.nin
+    wildcards: strain=Ixodes_CAYQID01
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CAYQID01.fna -dbtype nucl -out results/blastdb/Ixodes_CAYQID01
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54705.fna
+    output: results/blastdb/Rickettsiella_54705.nin
+    jobid: 35
+    reason: Missing output files: results/blastdb/Rickettsiella_54705.nin
+    wildcards: strain=Rickettsiella_54705
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54705.fna -dbtype nucl -out results/blastdb/Rickettsiella_54705
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CharlesRiver.fna
+    output: results/blastdb/Ixodes_CharlesRiver.nin
+    jobid: 28
+    reason: Missing output files: results/blastdb/Ixodes_CharlesRiver.nin
+    wildcards: strain=Ixodes_CharlesRiver
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CharlesRiver.fna -dbtype nucl -out results/blastdb/Ixodes_CharlesRiver
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_sAp269.fna
+    output: results/blastdb/Spiroplasma_sAp269.nin
+    jobid: 43
+    reason: Missing output files: results/blastdb/Spiroplasma_sAp269.nin
+    wildcards: strain=Spiroplasma_sAp269
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_sAp269.fna -dbtype nucl -out results/blastdb/Spiroplasma_sAp269
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54706.fna
+    output: results/blastdb/Rickettsiella_54706.nin
+    jobid: 36
+    reason: Missing output files: results/blastdb/Rickettsiella_54706.nin
+    wildcards: strain=Rickettsiella_54706
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54706.fna -dbtype nucl -out results/blastdb/Rickettsiella_54706
+        
+
+[Thu May  8 09:14:54 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_Y32.fna
+    output: results/blastdb/Spiroplasma_Y32.nin
+    jobid: 42
+    reason: Missing output files: results/blastdb/Spiroplasma_Y32.nin
+    wildcards: strain=Spiroplasma_Y32
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_Y32.fna -dbtype nucl -out results/blastdb/Spiroplasma_Y32
+        
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/B_divergens_JAHBMH01
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Spiroplasma_sAp269
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_54705
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Ixodes_CAYQID01
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_54706
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Ixodes_CharlesRiver
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Spiroplasma_Y32
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Midichloria_IricVA
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Ixodes_PV-2024
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_DGE
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_JAHBMH01/B_divergens_JAHBMH01.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_sAp269.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54705.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CAYQID01.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54706.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_CharlesRiver.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_Y32.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_IricVA.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_PV-2024.fna
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_DGE.fna
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Sequence type: Nucleotide
+Keep MBits: T
+Keep MBits: T
+Keep MBits: T
+Keep MBits: T
+Keep MBits: T
+Keep MBits: T
+Keep MBits: T
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Keep MBits: T
+Maximum file size: 3000000000B
+Keep MBits: T
+Keep MBits: T
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Maximum file size: 3000000000B
+Adding sequences from FASTA; added 1 sequences in 0.031131 seconds.
+Adding sequences from FASTA; added 1 sequences in 0.0378869 seconds.
+Adding sequences from FASTA; added 1 sequences in 0.0381451 seconds.
+Adding sequences from FASTA; added 1 sequences in 0.040941 seconds.
+Adding sequences from FASTA; added 2 sequences in 0.048418 seconds.
+Adding sequences from FASTA; added 2 sequences in 0.045655 seconds.
+Adding sequences from FASTA; added 6 sequences in 0.076416 seconds.
+
+
+
+
+
+
+
+
+
+
+Adding sequences from FASTA; added 80 sequences in 0.183857 seconds.
+
+
+
+
+[Thu May  8 09:14:57 2025]
+Finished job 36.
+1 of 30 steps (3%) done
+Select jobs to execute...
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_63004e16.fna
+    output: results/blastdb/Rickettsiella_63004e16.nin
+    jobid: 38
+    reason: Missing output files: results/blastdb/Rickettsiella_63004e16.nin
+    wildcards: strain=Rickettsiella_63004e16
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_63004e16.fna -dbtype nucl -out results/blastdb/Rickettsiella_63004e16
+        
+
+
+[Thu May  8 09:14:57 2025]
+Finished job 35.
+2 of 30 steps (7%) done
+[Thu May  8 09:14:57 2025]
+Finished job 42.
+3 of 30 steps (10%) done
+[Thu May  8 09:14:57 2025]
+Finished job 43.
+4 of 30 steps (13%) done
+[Thu May  8 09:14:57 2025]
+Finished job 40.
+5 of 30 steps (17%) done
+[Thu May  8 09:14:57 2025]
+Finished job 33.
+6 of 30 steps (20%) done
+[Thu May  8 09:14:57 2025]
+Finished job 27.
+7 of 30 steps (23%) done
+Select jobs to execute...
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db_babesia:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_duncani_WA1/B_duncani_WA1.fna
+    output: results/blastdb/B_duncani_WA1.nin
+    jobid: 25
+    reason: Missing output files: results/blastdb/B_duncani_WA1.nin
+    wildcards: strain=B_duncani_WA1
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_duncani_WA1/B_duncani_WA1.fna -dbtype nucl -out results/blastdb/B_duncani_WA1
+        
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_Ap-RA04.fna
+    output: results/blastdb/Rickettsiella_Ap-RA04.nin
+    jobid: 39
+    reason: Missing output files: results/blastdb/Rickettsiella_Ap-RA04.nin
+    wildcards: strain=Rickettsiella_Ap-RA04
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_Ap-RA04.fna -dbtype nucl -out results/blastdb/Rickettsiella_Ap-RA04
+        
+
+
+Building a new DB, current time: 05/08/2025 09:14:57
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_63004e16
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_63004e16.fna
+Sequence type: Nucleotide
+
+Keep MBits: T
+Maximum file size: 3000000000B
+[Thu May  8 09:14:57 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_Ird3Mm.fna
+    output: results/blastdb/Midichloria_Ird3Mm.nin
+    jobid: 32
+    reason: Missing output files: results/blastdb/Midichloria_Ird3Mm.nin
+    wildcards: strain=Midichloria_Ird3Mm
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_Ird3Mm.fna -dbtype nucl -out results/blastdb/Midichloria_Ird3Mm
+        
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_32cd738c.fna
+    output: results/blastdb/Rickettsiella_32cd738c.nin
+    jobid: 34
+    reason: Missing output files: results/blastdb/Rickettsiella_32cd738c.nin
+    wildcards: strain=Rickettsiella_32cd738c
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_32cd738c.fna -dbtype nucl -out results/blastdb/Rickettsiella_32cd738c
+        
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_SHM.fna
+    output: results/blastdb/Spiroplasma_SHM.nin
+    jobid: 41
+    reason: Missing output files: results/blastdb/Spiroplasma_SHM.nin
+    wildcards: strain=Spiroplasma_SHM
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_SHM.fna -dbtype nucl -out results/blastdb/Spiroplasma_SHM
+        
+
+[Thu May  8 09:14:57 2025]
+rule make_blast_db_babesia:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_CCSG02/B_divergens_CCSG02.fna
+    output: results/blastdb/B_divergens_CCSG02.nin
+    jobid: 23
+    reason: Missing output files: results/blastdb/B_divergens_CCSG02.nin
+    wildcards: strain=B_divergens_CCSG02
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_CCSG02/B_divergens_CCSG02.fna -dbtype nucl -out results/blastdb/B_divergens_CCSG02
+        
+[Thu May  8 09:14:58 2025]
+Finished job 24.
+8 of 30 steps (27%) done
+Select jobs to execute...
+Adding sequences from FASTA; added 1 sequences in 0.0337749 seconds.
+
+[Thu May  8 09:14:58 2025]
+rule make_blast_db_babesia:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_microti_RI/B_microti_RI.fna
+    output: results/blastdb/B_microti_RI.nin
+    jobid: 26
+    reason: Missing output files: results/blastdb/B_microti_RI.nin
+    wildcards: strain=B_microti_RI
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_microti_RI/B_microti_RI.fna -dbtype nucl -out results/blastdb/B_microti_RI
+        
+Select jobs to execute...
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/B_duncani_WA1
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_duncani_WA1/B_duncani_WA1.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_Ap-RA04
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_Ap-RA04.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Midichloria_Ird3Mm
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Midichloria/Midichloria_Ird3Mm.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_32cd738c
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_32cd738c.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Spiroplasma_SHM
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Spiroplasma/Spiroplasma_SHM.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/B_divergens_CCSG02
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_CCSG02/B_divergens_CCSG02.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+Adding sequences from FASTA; added 1 sequences in 0.0168719 seconds.
+Adding sequences from FASTA; added 1 sequences in 0.022059 seconds.
+Adding sequences from FASTA; added 1 sequences in 0.024853 seconds.
+Adding sequences from FASTA; added 3 sequences in 0.0439131 seconds.
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/B_microti_RI
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_microti_RI/B_microti_RI.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+[Thu May  8 09:14:58 2025]
+Finished job 38.
+9 of 30 steps (30%) done
+
+
+
+
+
+[Thu May  8 09:14:58 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Maya1009.fna
+    output: results/blastdb/Ixodes_Maya1009.nin
+    jobid: 29
+    reason: Missing output files: results/blastdb/Ixodes_Maya1009.nin
+    wildcards: strain=Ixodes_Maya1009
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Maya1009.fna -dbtype nucl -out results/blastdb/Ixodes_Maya1009
+        
+
+
+[Thu May  8 09:14:58 2025]
+Finished job 39.
+10 of 30 steps (33%) done
+[Thu May  8 09:14:58 2025]
+Finished job 32.
+11 of 30 steps (37%) done
+Select jobs to execute...
+
+
+Adding sequences from FASTA; added 165 sequences in 0.211524 seconds.
+Adding sequences from FASTA; added 141 sequences in 0.192632 seconds.
+Adding sequences from FASTA; added 6 sequences in 0.113092 seconds.
+
+[Thu May  8 09:14:58 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Murphy0812.fna
+    output: results/blastdb/Ixodes_Murphy0812.nin
+    jobid: 30
+    reason: Missing output files: results/blastdb/Ixodes_Murphy0812.nin
+    wildcards: strain=Ixodes_Murphy0812
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Murphy0812.fna -dbtype nucl -out results/blastdb/Ixodes_Murphy0812
+        
+
+[Thu May  8 09:14:58 2025]
+rule make_blast_db:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54707.fna
+    output: results/blastdb/Rickettsiella_54707.nin
+    jobid: 37
+    reason: Missing output files: results/blastdb/Rickettsiella_54707.nin
+    wildcards: strain=Rickettsiella_54707
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        makeblastdb -in /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54707.fna -dbtype nucl -out results/blastdb/Rickettsiella_54707
+        
+[Thu May  8 09:14:58 2025]
+Finished job 34.
+12 of 30 steps (40%) done
+[Thu May  8 09:14:58 2025]
+Finished job 41.
+13 of 30 steps (43%) done
+Select jobs to execute...
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Ixodes_Maya1009
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Maya1009.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+
+
+
+
+[Thu May  8 09:14:58 2025]
+Finished job 26.
+14 of 30 steps (47%) done
+
+
+[Thu May  8 09:14:58 2025]
+Finished job 23.
+15 of 30 steps (50%) done
+
+[Thu May  8 09:14:58 2025]
+rule panaroo:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_PKo/B_afzelii_PKo_prokka/B_afzelii_PKo.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_BO23/B_afzelii_BO23_prokka/B_afzelii_BO23.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_K78/B_afzelii_K78_prokka/B_afzelii_K78.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_Tom3107/B_afzelii_Tom3107_prokka/B_afzelii_Tom3107.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PAbe/B_burgdorferi_PAbe_prokka/B_burgdorferi_PAbe.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_B31/B_burgdorferi_B31_prokka/B_burgdorferi_B31.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_NE5248/B_burgdorferi_NE5248_prokka/B_burgdorferi_NE5248.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PFheI/B_burgdorferi_PFheI_prokka/B_burgdorferi_PFheI.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBi/B_bavariensis_PBi_prokka/B_bavariensis_PBi.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBaell/B_bavariensis_PBaell_prokka/B_bavariensis_PBaell.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_NT24/B_bavariensis_NT24_prokka/B_bavariensis_NT24.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_PBes/B_garinii_PBes_prokka/B_garinii_PBes.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_20047/B_garinii_20047_prokka/B_garinii_20047.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_BgVir/B_garinii_BgVir_prokka/B_garinii_BgVir.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_NT31/B_garinii_NT31_prokka/B_garinii_NT31.gff
+    output: results/panaroo/core_gene_alignment.aln, results/panaroo/gene_presence_absence.csv, results/panaroo/core_gene_alignment_filtered.aln
+    jobid: 20
+    reason: Missing output files: results/panaroo/core_gene_alignment_filtered.aln
+    threads: 4
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+
+        panaroo -i /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_PKo/B_afzelii_PKo_prokka/B_afzelii_PKo.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_BO23/B_afzelii_BO23_prokka/B_afzelii_BO23.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_K78/B_afzelii_K78_prokka/B_afzelii_K78.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_Tom3107/B_afzelii_Tom3107_prokka/B_afzelii_Tom3107.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PAbe/B_burgdorferi_PAbe_prokka/B_burgdorferi_PAbe.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_B31/B_burgdorferi_B31_prokka/B_burgdorferi_B31.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_NE5248/B_burgdorferi_NE5248_prokka/B_burgdorferi_NE5248.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PFheI/B_burgdorferi_PFheI_prokka/B_burgdorferi_PFheI.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBi/B_bavariensis_PBi_prokka/B_bavariensis_PBi.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBaell/B_bavariensis_PBaell_prokka/B_bavariensis_PBaell.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_NT24/B_bavariensis_NT24_prokka/B_bavariensis_NT24.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_PBes/B_garinii_PBes_prokka/B_garinii_PBes.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_20047/B_garinii_20047_prokka/B_garinii_20047.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_BgVir/B_garinii_BgVir_prokka/B_garinii_BgVir.gff /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_NT31/B_garinii_NT31_prokka/B_garinii_NT31.gff -o results/panaroo --clean-mode strict             -a core --aligner mafft -t 4
+        
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Ixodes_Murphy0812
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Ixodes/Ixodes_Murphy0812.fna
+Sequence type: Nucleotide
+
+
+Building a new DB, current time: 05/08/2025 09:14:58
+New DB name:   /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/results/blastdb/Rickettsiella_54707
+New DB title:  /scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/Rickettsiella/Rickettsiella_54707.fna
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+Keep MBits: T
+Maximum file size: 3000000000B
+Activating conda environment: .snakemake/conda/536b9ae8ef8b1e8e04ed323b7e5c6cf6_
+[Thu May  8 09:14:58 2025]
+Finished job 25.
+16 of 30 steps (53%) done
+Adding sequences from FASTA; added 1 sequences in 0.0252349 seconds.
+
+
+[Thu May  8 09:14:58 2025]
+Finished job 37.
+17 of 30 steps (57%) done
+Adding sequences from FASTA; added 204516 sequences in 8.81493 seconds.
+
+
+[Thu May  8 09:15:06 2025]
+Finished job 28.
+18 of 30 steps (60%) done
+Adding sequences from FASTA; added 25161 sequences in 21.8951 seconds.
+Adding sequences from FASTA; added 26101 sequences in 22.039 seconds.
+
+
+Adding sequences from FASTA; added 70366 sequences in 22.9025 seconds.
+[Thu May  8 09:15:20 2025]
+Finished job 30.
+19 of 30 steps (63%) done
+
+
+
+
+[Thu May  8 09:15:20 2025]
+Finished job 31.
+20 of 30 steps (67%) done
+[Thu May  8 09:15:20 2025]
+Finished job 29.
+21 of 30 steps (70%) done
+pre-processing gff3 files...
+  0%|          | 0/4 [00:00<?, ?it/s] 25%|██▌       | 1/4 [00:00<00:02,  1.12it/s] 50%|█████     | 2/4 [00:01<00:01,  1.67it/s] 75%|███████▌  | 3/4 [00:01<00:00,  2.00it/s]100%|██████████| 4/4 [00:02<00:00,  2.31it/s]100%|██████████| 4/4 [00:02<00:00,  2.00it/s]================================================================
+Program: CD-HIT, V4.8.1 (+OpenMP), Nov 12 2024, 10:35:24
+Command: cd-hit -T 4 -i
+         results/panaroo/combined_protein_CDS.fasta -o
+         results/panaroo/combined_protein_cdhit_out.txt -c 0.98
+         -s 0.98 -aL 0.0 -AL 99999999 -aS 0.0 -AS 99999999 -M 0
+         -d 999 -g 1 -n 2
+
+Started: Thu May  8 09:15:25 2025
+================================================================
+                            Output                              
+----------------------------------------------------------------
+Your word length is 2, using 5 may be faster!
+total seq: 17275
+longest and shortest : 2166 and 29
+Total letters: 5299788
+Sequences have been sorted
+
+Approximated minimal memory consumption:
+Sequence        : 7M
+Buffer          : 4 X 16M = 66M
+Table           : 2 X 0M = 0M
+Miscellaneous   : 0M
+Total           : 74M
+
+Table limit with the given memory limit:
+Max number of representatives: 1500000
+Max number of word counting entries: 90218625
+
+# comparing sequences from          0  to       2879
+..---------- new table with      849 representatives
+# comparing sequences from       2879  to       5278
+.....................----------   2063 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       3215  to       5558
+....................----------   2022 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       3536  to       5825
+....................----------   1948 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       3877  to       6110
+.....................----------   1903 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       4207  to       6385
+....................----------   1865 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       4520  to       6645
+....................----------   1814 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       4831  to       6905
+.....................----------   1856 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       5049  to       7086
+....................----------   1769 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       5317  to       7310
+....................----------   1631 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       5679  to       7611
+....................----------   1673 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       5938  to       7827
+.....................----------   1595 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       6232  to       8072
+...................----------   1509 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       6563  to       8348
+....................----------   1486 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       6862  to       8597
+.....................----------   1467 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       7130  to       8820
+....................----------   1401 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       7419  to       9061
+....................----------   1358 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       7703  to       9298
+....................----------   1334 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       7964  to       9515
+....................----------   1339 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       8176  to       9692
+....................----------   1268 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       8424  to       9899
+....................----------   1202 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       8697  to      10126
+....................----------   1151 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       8975  to      10358
+....................----------   1130 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       9228  to      10569
+....................----------   1083 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       9486  to      10784
+....................----------   1064 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       9720  to      10979
+....................----------    988 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       9991  to      11205
+...............................    10000  finished       3352  clusters
+----------    980 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      10225  to      11400
+....................----------    940 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      10460  to      11595
+....................----------    880 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      10715  to      11808
+....................----------    822 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      10986  to      12034
+.....................----------    762 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      11272  to      12272
+...................----------    762 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      11510  to      12470
+....................----------    746 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      11724  to      12649
+....................----------    710 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      11939  to      12828
+.....................----------    667 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      12161  to      13013
+....................----------    577 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      12436  to      13242
+...................----------    543 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      12699  to      13461
+....................----------    533 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      12928  to      13652
+....................----------    467 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      13185  to      13866
+....................----------    449 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      13417  to      14060
+....................----------    407 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      13653  to      14256
+...................----------    348 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      13908  to      14469
+....................----------    315 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      14154  to      14674
+...................----------    257 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      14417  to      14893
+....................----------    170 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      14723  to      15148
+...................----------    166 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      14982  to      15364
+....................----------    168 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      15196  to      15542
+...................----------     82 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      15460  to      15762
+...................----------     28 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      15734  to      15990
+...................----------     16 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from      15974  to      16190
+....................---------- new table with       97 representatives
+# comparing sequences from      16190  to      16370
+..................---------- new table with       94 representatives
+# comparing sequences from      16370  to      17275
+.....................---------- new table with      535 representatives
+
+    17275  finished       6475  clusters
+
+Approximated maximum memory consumption: 76M
+writing new database
+writing clustering information
+program completed !
+
+Total CPU time 6.18
+
+running cmd: cd-hit -T 4 -i results/panaroo/combined_protein_CDS.fasta -o results/panaroo/combined_protein_cdhit_out.txt -c 0.98 -s 0.98 -aL 0.0 -AL 99999999 -aS 0.0 -AS 99999999 -M 0 -d 999 -g 1 -n 2
+generating initial network...
+Processing paralogs...
+  0%|          | 0/171 [00:00<?, ?it/s]100%|██████████| 171/171 [00:00<00:00, 1951.37it/s]
+collapse mistranslations...
+Processing depth:  1
+Iteration:  1
+  0%|          | 0/6799 [00:00<?, ?it/s] 12%|█▏        | 801/6799 [00:00<00:00, 7989.32it/s] 27%|██▋       | 1820/6799 [00:00<00:00, 9267.72it/s] 48%|████▊     | 3254/6799 [00:00<00:00, 11575.18it/s] 75%|███████▍  | 5071/6799 [00:00<00:00, 14136.23it/s] 99%|█████████▉| 6718/6799 [00:00<00:00, 14966.03it/s]100%|██████████| 6799/6799 [00:00<00:00, 13152.02it/s]
+Iteration:  2
+  0%|          | 0/590 [00:00<?, ?it/s] 80%|███████▉  | 470/590 [00:00<00:00, 4695.96it/s]100%|██████████| 590/590 [00:00<00:00, 4557.97it/s]
+Iteration:  3
+  0%|          | 0/122 [00:00<?, ?it/s]100%|██████████| 122/122 [00:00<00:00, 3627.85it/s]
+Iteration:  4
+  0%|          | 0/28 [00:00<?, ?it/s]100%|██████████| 28/28 [00:00<00:00, 2727.75it/s]
+Iteration:  5
+  0%|          | 0/7 [00:00<?, ?it/s]100%|██████████| 7/7 [00:00<00:00, 2854.66it/s]
+Iteration:  6
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 1201.46it/s]
+Iteration:  7
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 1200.09it/s]
+Iteration:  8
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 2505.56it/s]
+Processing depth:  2
+Iteration:  1
+  0%|          | 0/5872 [00:00<?, ?it/s] 25%|██▌       | 1488/5872 [00:00<00:00, 14840.39it/s] 58%|█████▊    | 3429/5872 [00:00<00:00, 17513.19it/s] 88%|████████▊ | 5181/5872 [00:00<00:00, 15919.65it/s]100%|██████████| 5872/5872 [00:00<00:00, 13281.00it/s]
+Iteration:  2
+  0%|          | 0/50 [00:00<?, ?it/s]100%|██████████| 50/50 [00:00<00:00, 2388.34it/s]
+Iteration:  3
+  0%|          | 0/9 [00:00<?, ?it/s]100%|██████████| 9/9 [00:00<00:00, 2826.14it/s]
+Iteration:  4
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2243.54it/s]
+Iteration:  5
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 2290.72it/s]
+Processing depth:  3
+Iteration:  1
+  0%|          | 0/5806 [00:00<?, ?it/s] 23%|██▎       | 1340/5806 [00:00<00:00, 13364.10it/s] 52%|█████▏    | 3047/5806 [00:00<00:00, 15520.25it/s] 84%|████████▍ | 4899/5806 [00:00<00:00, 16877.22it/s]100%|██████████| 5806/5806 [00:00<00:00, 11162.87it/s]
+Iteration:  2
+  0%|          | 0/26 [00:00<?, ?it/s]100%|██████████| 26/26 [00:00<00:00, 1904.34it/s]
+Iteration:  3
+  0%|          | 0/7 [00:00<?, ?it/s]100%|██████████| 7/7 [00:00<00:00, 2265.27it/s]
+Iteration:  4
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2255.61it/s]
+collapse gene families...
+Processing depth:  1
+Iteration:  1
+  0%|          | 0/5770 [00:00<?, ?it/s] 22%|██▏       | 1285/5770 [00:00<00:00, 12812.71it/s] 62%|██████▏   | 3561/5770 [00:00<00:00, 18631.15it/s] 94%|█████████▍| 5425/5770 [00:00<00:00, 16276.07it/s]100%|██████████| 5770/5770 [00:00<00:00, 15020.33it/s]
+Iteration:  2
+  0%|          | 0/697 [00:00<?, ?it/s] 58%|█████▊    | 401/697 [00:00<00:00, 3980.57it/s]100%|██████████| 697/697 [00:00<00:00, 3935.02it/s]
+Iteration:  3
+  0%|          | 0/314 [00:00<?, ?it/s] 96%|█████████▌| 300/314 [00:00<00:00, 2988.67it/s]100%|██████████| 314/314 [00:00<00:00, 2986.01it/s]
+Iteration:  4
+  0%|          | 0/189 [00:00<?, ?it/s]100%|██████████| 189/189 [00:00<00:00, 2466.45it/s]
+Iteration:  5
+  0%|          | 0/142 [00:00<?, ?it/s]100%|██████████| 142/142 [00:00<00:00, 2371.43it/s]
+Iteration:  6
+  0%|          | 0/122 [00:00<?, ?it/s]100%|██████████| 122/122 [00:00<00:00, 2451.36it/s]
+Iteration:  7
+  0%|          | 0/101 [00:00<?, ?it/s]100%|██████████| 101/101 [00:00<00:00, 2275.59it/s]
+Iteration:  8
+  0%|          | 0/84 [00:00<?, ?it/s]100%|██████████| 84/84 [00:00<00:00, 2374.39it/s]
+Iteration:  9
+  0%|          | 0/70 [00:00<?, ?it/s]100%|██████████| 70/70 [00:00<00:00, 2645.75it/s]
+Iteration:  10
+  0%|          | 0/54 [00:00<?, ?it/s]100%|██████████| 54/54 [00:00<00:00, 2558.25it/s]
+Iteration:  11
+  0%|          | 0/44 [00:00<?, ?it/s]100%|██████████| 44/44 [00:00<00:00, 2481.14it/s]
+Iteration:  12
+  0%|          | 0/35 [00:00<?, ?it/s]100%|██████████| 35/35 [00:00<00:00, 2268.42it/s]
+Iteration:  13
+  0%|          | 0/34 [00:00<?, ?it/s]100%|██████████| 34/34 [00:00<00:00, 2285.76it/s]
+Iteration:  14
+  0%|          | 0/29 [00:00<?, ?it/s]100%|██████████| 29/29 [00:00<00:00, 2271.21it/s]
+Iteration:  15
+  0%|          | 0/25 [00:00<?, ?it/s]100%|██████████| 25/25 [00:00<00:00, 2728.75it/s]
+Iteration:  16
+  0%|          | 0/18 [00:00<?, ?it/s]100%|██████████| 18/18 [00:00<00:00, 2522.05it/s]
+Iteration:  17
+  0%|          | 0/15 [00:00<?, ?it/s]100%|██████████| 15/15 [00:00<00:00, 2621.66it/s]
+Iteration:  18
+  0%|          | 0/13 [00:00<?, ?it/s]100%|██████████| 13/13 [00:00<00:00, 2337.96it/s]
+Iteration:  19
+  0%|          | 0/12 [00:00<?, ?it/s]100%|██████████| 12/12 [00:00<00:00, 2766.39it/s]
+Iteration:  20
+  0%|          | 0/9 [00:00<?, ?it/s]100%|██████████| 9/9 [00:00<00:00, 2442.02it/s]
+Iteration:  21
+  0%|          | 0/8 [00:00<?, ?it/s]100%|██████████| 8/8 [00:00<00:00, 2592.88it/s]
+Iteration:  22
+  0%|          | 0/7 [00:00<?, ?it/s]100%|██████████| 7/7 [00:00<00:00, 2506.41it/s]
+Iteration:  23
+  0%|          | 0/6 [00:00<?, ?it/s]100%|██████████| 6/6 [00:00<00:00, 2591.48it/s]
+Iteration:  24
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 2253.31it/s]
+Iteration:  25
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 2345.02it/s]
+Iteration:  26
+  0%|          | 0/4 [00:00<?, ?it/s]100%|██████████| 4/4 [00:00<00:00, 2183.40it/s]
+Iteration:  27
+  0%|          | 0/4 [00:00<?, ?it/s]100%|██████████| 4/4 [00:00<00:00, 2082.57it/s]
+Iteration:  28
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 2216.47it/s]
+Iteration:  29
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 2212.19it/s]
+Iteration:  30
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 2358.56it/s]
+Iteration:  31
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2172.09it/s]
+Iteration:  32
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2188.52it/s]
+Iteration:  33
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 1801.68it/s]
+Iteration:  34
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2103.46it/s]
+Iteration:  35
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2169.84it/s]
+Iteration:  36
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2156.45it/s]
+Iteration:  37
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2178.29it/s]
+Iteration:  38
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2167.04it/s]
+Iteration:  39
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2170.96it/s]
+Iteration:  40
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 2180.56it/s]
+Iteration:  41
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 2045.00it/s]
+Iteration:  42
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 1607.63it/s]
+Processing depth:  2
+Iteration:  1
+  0%|          | 0/3079 [00:00<?, ?it/s] 25%|██▌       | 775/3079 [00:00<00:00, 7730.54it/s] 96%|█████████▌| 2950/3079 [00:00<00:00, 15877.79it/s]100%|██████████| 3079/3079 [00:00<00:00, 13620.30it/s]
+Iteration:  2
+  0%|          | 0/83 [00:00<?, ?it/s]100%|██████████| 83/83 [00:00<00:00, 1468.92it/s]
+Iteration:  3
+  0%|          | 0/55 [00:00<?, ?it/s]100%|██████████| 55/55 [00:00<00:00, 1308.16it/s]
+Iteration:  4
+  0%|          | 0/44 [00:00<?, ?it/s]100%|██████████| 44/44 [00:00<00:00, 1383.86it/s]
+Iteration:  5
+  0%|          | 0/28 [00:00<?, ?it/s]100%|██████████| 28/28 [00:00<00:00, 972.19it/s]
+Iteration:  6
+  0%|          | 0/17 [00:00<?, ?it/s]100%|██████████| 17/17 [00:00<00:00, 1218.73it/s]
+Iteration:  7
+  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 1881.44it/s]
+Iteration:  8
+  0%|          | 0/6 [00:00<?, ?it/s]100%|██████████| 6/6 [00:00<00:00, 2240.55it/s]
+Iteration:  9
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 1216.68it/s]
+Iteration:  10
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 614.25it/s]
+Iteration:  11
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 496.72it/s]
+Iteration:  12
+  0%|          | 0/6 [00:00<?, ?it/s]100%|██████████| 6/6 [00:00<00:00, 759.45it/s]
+Iteration:  13
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 879.12it/s]
+Iteration:  14
+  0%|          | 0/4 [00:00<?, ?it/s]100%|██████████| 4/4 [00:00<00:00, 946.15it/s]
+Iteration:  15
+  0%|          | 0/6 [00:00<?, ?it/s]100%|██████████| 6/6 [00:00<00:00, 981.47it/s]
+Iteration:  16
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 741.44it/s]
+Iteration:  17
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 687.25it/s]
+Iteration:  18
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 1421.56it/s]
+Processing depth:  3
+Iteration:  1
+  0%|          | 0/2650 [00:00<?, ?it/s] 38%|███▊      | 1014/2650 [00:00<00:00, 10034.36it/s] 76%|███████▌  | 2018/2650 [00:00<00:00, 5106.41it/s] 100%|██████████| 2650/2650 [00:00<00:00, 6812.72it/s]
+Iteration:  2
+  0%|          | 0/54 [00:00<?, ?it/s]100%|██████████| 54/54 [00:00<00:00, 607.26it/s]
+Iteration:  3
+  0%|          | 0/21 [00:00<?, ?it/s]100%|██████████| 21/21 [00:00<00:00, 529.67it/s]
+Iteration:  4
+  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 498.47it/s]
+Iteration:  5
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 462.32it/s]
+Iteration:  6
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 478.27it/s]
+Iteration:  7
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 754.51it/s]
+trimming contig ends...
+refinding genes...
+Number of searches to perform:  4358
+Searching...
+0it [00:00, ?it/s]8it [00:00, 15.03it/s]12it [00:01,  6.19it/s]15it [00:01,  8.77it/s]
+translating hits...
+removing by consensus...
+Updating output...
+Number of refound genes:  34
+collapse gene families with refound genes...
+Processing depth:  1
+Iteration:  1
+  0%|          | 0/1973 [00:00<?, ?it/s] 69%|██████▉   | 1358/1973 [00:00<00:00, 13506.02it/s]100%|██████████| 1973/1973 [00:00<00:00, 12228.00it/s]
+Processing depth:  2
+Iteration:  1
+  0%|          | 0/1973 [00:00<?, ?it/s] 63%|██████▎   | 1246/1973 [00:00<00:00, 12448.91it/s]100%|██████████| 1973/1973 [00:00<00:00, 7517.69it/s] 
+Iteration:  2
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 488.45it/s]
+Processing depth:  3
+Iteration:  1
+  0%|          | 0/1971 [00:00<?, ?it/s] 61%|██████    | 1197/1971 [00:00<00:00, 11934.22it/s]100%|██████████| 1971/1971 [00:00<00:00, 4534.13it/s] 
+Iteration:  2
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 425.95it/s]
+writing output...
+generating core genome MSAs...
+  0%|          | 0/791 [00:00<?, ?it/s]  1%|          | 8/791 [00:00<00:13, 56.68it/s]  2%|▏         | 16/791 [00:00<00:13, 57.87it/s]  3%|▎         | 24/791 [00:00<00:17, 42.89it/s]  4%|▍         | 32/791 [00:00<00:19, 38.18it/s]  5%|▌         | 40/791 [00:01<00:20, 36.01it/s]  6%|▌         | 48/791 [00:01<00:21, 34.62it/s]  7%|▋         | 56/791 [00:01<00:22, 33.26it/s]  8%|▊         | 64/791 [00:01<00:21, 33.11it/s]  9%|▉         | 72/791 [00:02<00:21, 32.97it/s] 10%|█         | 80/791 [00:02<00:21, 32.94it/s] 11%|█         | 88/791 [00:02<00:21, 32.86it/s] 12%|█▏        | 96/791 [00:02<00:21, 32.28it/s] 13%|█▎        | 104/791 [00:02<00:21, 32.42it/s] 14%|█▍        | 112/791 [00:03<00:20, 32.50it/s] 15%|█▌        | 120/791 [00:03<00:20, 32.54it/s] 16%|█▌        | 128/791 [00:03<00:20, 32.61it/s] 17%|█▋        | 136/791 [00:03<00:20, 32.13it/s] 18%|█▊        | 144/791 [00:04<00:20, 32.30it/s] 19%|█▉        | 152/791 [00:04<00:19, 32.39it/s] 20%|██        | 160/791 [00:04<00:19, 32.52it/s] 21%|██        | 168/791 [00:04<00:19, 32.59it/s] 22%|██▏       | 176/791 [00:05<00:19, 32.14it/s] 23%|██▎       | 184/791 [00:05<00:18, 32.32it/s] 24%|██▍       | 192/791 [00:05<00:18, 32.43it/s] 25%|██▌       | 200/791 [00:05<00:18, 32.49it/s] 26%|██▋       | 208/791 [00:06<00:17, 32.62it/s] 27%|██▋       | 216/791 [00:06<00:17, 32.20it/s] 28%|██▊       | 224/791 [00:06<00:17, 32.36it/s] 29%|██▉       | 232/791 [00:06<00:17, 32.48it/s] 30%|███       | 240/791 [00:07<00:16, 32.59it/s] 31%|███▏      | 248/791 [00:07<00:16, 32.59it/s] 32%|███▏      | 256/791 [00:07<00:16, 32.20it/s] 33%|███▎      | 264/791 [00:07<00:16, 32.40it/s] 34%|███▍      | 272/791 [00:08<00:15, 32.48it/s] 35%|███▌      | 280/791 [00:08<00:15, 32.54it/s] 36%|███▋      | 288/791 [00:08<00:15, 32.55it/s] 37%|███▋      | 296/791 [00:08<00:15, 32.10it/s] 38%|███▊      | 304/791 [00:09<00:15, 32.32it/s] 39%|███▉      | 312/791 [00:09<00:14, 32.44it/s] 40%|████      | 320/791 [00:09<00:14, 32.57it/s] 41%|████▏     | 328/791 [00:09<00:14, 32.68it/s] 42%|████▏     | 336/791 [00:10<00:14, 32.25it/s] 43%|████▎     | 344/791 [00:10<00:13, 32.44it/s] 45%|████▍     | 352/791 [00:10<00:13, 32.61it/s] 46%|████▌     | 360/791 [00:10<00:13, 32.64it/s] 47%|████▋     | 368/791 [00:11<00:12, 32.71it/s] 48%|████▊     | 376/791 [00:11<00:12, 32.27it/s] 49%|████▊     | 384/791 [00:11<00:12, 32.47it/s] 50%|████▉     | 392/791 [00:11<00:12, 32.55it/s] 51%|█████     | 400/791 [00:12<00:12, 32.54it/s] 52%|█████▏    | 408/791 [00:12<00:11, 32.56it/s] 53%|█████▎    | 416/791 [00:12<00:11, 32.15it/s] 54%|█████▎    | 424/791 [00:12<00:11, 32.39it/s] 55%|█████▍    | 432/791 [00:13<00:11, 32.51it/s] 56%|█████▌    | 440/791 [00:13<00:10, 32.63it/s] 57%|█████▋    | 448/791 [00:13<00:10, 32.76it/s] 58%|█████▊    | 456/791 [00:13<00:10, 32.38it/s] 59%|█████▊    | 464/791 [00:14<00:10, 32.56it/s] 60%|█████▉    | 472/791 [00:14<00:09, 32.67it/s] 61%|██████    | 480/791 [00:14<00:09, 32.76it/s] 62%|██████▏   | 488/791 [00:14<00:09, 32.81it/s] 63%|██████▎   | 496/791 [00:15<00:09, 32.36it/s] 64%|██████▎   | 504/791 [00:15<00:08, 32.61it/s] 65%|██████▍   | 512/791 [00:15<00:08, 32.76it/s] 66%|██████▌   | 520/791 [00:15<00:08, 32.79it/s] 67%|██████▋   | 528/791 [00:16<00:08, 32.87it/s] 68%|██████▊   | 536/791 [00:16<00:07, 32.38it/s] 69%|██████▉   | 544/791 [00:16<00:07, 32.36it/s] 70%|██████▉   | 552/791 [00:16<00:07, 32.50it/s] 71%|███████   | 560/791 [00:17<00:07, 32.63it/s] 72%|███████▏  | 568/791 [00:17<00:06, 32.74it/s] 73%|███████▎  | 576/791 [00:17<00:06, 32.41it/s] 74%|███████▍  | 584/791 [00:17<00:06, 32.64it/s] 75%|███████▍  | 592/791 [00:18<00:06, 32.75it/s] 76%|███████▌  | 600/791 [00:18<00:05, 32.78it/s] 77%|███████▋  | 608/791 [00:18<00:05, 32.77it/s] 78%|███████▊  | 616/791 [00:18<00:05, 32.35it/s] 79%|███████▉  | 624/791 [00:18<00:05, 32.44it/s] 80%|███████▉  | 632/791 [00:19<00:04, 32.56it/s] 81%|████████  | 640/791 [00:19<00:04, 32.62it/s] 82%|████████▏ | 648/791 [00:19<00:04, 32.62it/s] 83%|████████▎ | 656/791 [00:19<00:04, 32.23it/s] 84%|████████▍ | 664/791 [00:20<00:03, 32.30it/s] 85%|████████▍ | 672/791 [00:20<00:03, 32.38it/s] 86%|████████▌ | 680/791 [00:20<00:03, 32.41it/s] 87%|████████▋ | 688/791 [00:20<00:03, 32.46it/s] 88%|████████▊ | 696/791 [00:21<00:02, 32.11it/s] 89%|████████▉ | 704/791 [00:21<00:02, 32.30it/s] 90%|█████████ | 712/791 [00:21<00:02, 32.22it/s] 91%|█████████ | 720/791 [00:21<00:02, 32.38it/s] 92%|█████████▏| 728/791 [00:22<00:01, 32.44it/s] 93%|█████████▎| 736/791 [00:22<00:01, 32.11it/s] 94%|█████████▍| 744/791 [00:22<00:01, 32.25it/s] 95%|█████████▌| 752/791 [00:22<00:01, 32.38it/s] 96%|█████████▌| 760/791 [00:23<00:00, 32.49it/s] 97%|█████████▋| 768/791 [00:23<00:00, 32.50it/s] 98%|█████████▊| 776/791 [00:23<00:00, 32.16it/s] 99%|█████████▉| 784/791 [00:23<00:00, 32.32it/s]100%|██████████| 791/791 [00:23<00:00, 33.04it/s]
+  0%|          | 0/791 [00:00<?, ?it/s]  1%|          | 8/791 [00:00<01:32,  8.42it/s]  2%|▏         | 12/791 [00:01<01:51,  6.96it/s]  2%|▏         | 16/791 [00:03<03:18,  3.91it/s]  3%|▎         | 20/791 [00:04<03:42,  3.47it/s]  3%|▎         | 24/791 [00:06<03:53,  3.29it/s]  4%|▎         | 28/791 [00:07<03:44,  3.39it/s]  4%|▍         | 32/791 [00:08<03:24,  3.71it/s]  5%|▍         | 36/791 [00:09<04:06,  3.06it/s]  5%|▌         | 40/791 [00:11<04:09,  3.01it/s]  6%|▌         | 44/791 [00:12<04:15,  2.92it/s]  6%|▌         | 48/791 [00:14<04:15,  2.91it/s]  7%|▋         | 52/791 [00:15<03:46,  3.26it/s]  7%|▋         | 56/791 [00:17<04:24,  2.78it/s]  8%|▊         | 60/791 [00:18<04:35,  2.66it/s]  8%|▊         | 64/791 [00:19<04:13,  2.87it/s]  9%|▊         | 68/791 [00:21<04:47,  2.51it/s]  9%|▉         | 72/791 [00:24<05:24,  2.22it/s] 10%|▉         | 76/791 [00:26<06:08,  1.94it/s] 10%|█         | 80/791 [00:28<05:20,  2.22it/s] 11%|█         | 84/791 [00:29<05:07,  2.30it/s] 11%|█         | 88/791 [00:30<04:47,  2.44it/s] 12%|█▏        | 92/791 [00:33<05:37,  2.07it/s] 12%|█▏        | 96/791 [00:35<05:13,  2.21it/s] 13%|█▎        | 100/791 [00:36<04:53,  2.35it/s] 13%|█▎        | 104/791 [00:37<04:08,  2.77it/s] 14%|█▎        | 108/791 [00:38<04:10,  2.73it/s] 14%|█▍        | 112/791 [00:40<04:04,  2.77it/s] 15%|█▍        | 116/791 [00:41<04:03,  2.77it/s] 15%|█▌        | 120/791 [00:44<04:58,  2.25it/s] 16%|█▌        | 124/791 [00:46<05:10,  2.15it/s] 16%|█▌        | 128/791 [00:48<05:20,  2.07it/s] 17%|█▋        | 132/791 [00:51<06:16,  1.75it/s] 17%|█▋        | 136/791 [00:52<05:19,  2.05it/s] 18%|█▊        | 140/791 [00:55<05:51,  1.85it/s] 18%|█▊        | 144/791 [00:57<05:49,  1.85it/s] 19%|█▊        | 148/791 [00:59<05:23,  1.98it/s] 19%|█▉        | 152/791 [01:00<04:58,  2.14it/s] 20%|█▉        | 156/791 [01:02<04:52,  2.17it/s] 20%|██        | 160/791 [01:04<04:56,  2.13it/s] 21%|██        | 164/791 [01:05<04:32,  2.30it/s] 21%|██        | 168/791 [01:08<05:28,  1.90it/s] 22%|██▏       | 172/791 [01:10<05:00,  2.06it/s] 22%|██▏       | 176/791 [01:11<04:30,  2.27it/s] 23%|██▎       | 180/791 [01:14<04:49,  2.11it/s] 23%|██▎       | 184/791 [01:15<04:34,  2.21it/s] 24%|██▍       | 188/791 [01:17<04:28,  2.25it/s] 24%|██▍       | 192/791 [01:18<03:50,  2.60it/s] 25%|██▍       | 196/791 [01:20<04:18,  2.30it/s] 25%|██▌       | 200/791 [01:22<04:06,  2.40it/s] 26%|██▌       | 204/791 [01:23<04:07,  2.37it/s] 26%|██▋       | 208/791 [01:25<03:50,  2.53it/s] 27%|██▋       | 212/791 [01:27<04:31,  2.14it/s] 27%|██▋       | 216/791 [01:30<05:03,  1.90it/s] 28%|██▊       | 220/791 [01:34<06:32,  1.46it/s] 28%|██▊       | 224/791 [01:35<05:15,  1.80it/s] 29%|██▉       | 228/791 [01:36<04:37,  2.03it/s] 29%|██▉       | 232/791 [01:39<04:53,  1.91it/s] 30%|██▉       | 236/791 [01:41<04:50,  1.91it/s] 30%|███       | 240/791 [01:43<04:38,  1.98it/s] 31%|███       | 244/791 [01:46<05:18,  1.72it/s] 31%|███▏      | 248/791 [01:47<04:44,  1.91it/s] 32%|███▏      | 252/791 [01:51<05:31,  1.63it/s] 32%|███▏      | 256/791 [01:54<05:47,  1.54it/s] 33%|███▎      | 260/791 [01:57<06:30,  1.36it/s] 33%|███▎      | 264/791 [02:02<07:43,  1.14it/s] 34%|███▍      | 268/791 [02:08<09:28,  1.09s/it] 34%|███▍      | 272/791 [02:12<08:51,  1.02s/it] 35%|███▍      | 276/791 [02:18<09:53,  1.15s/it] 35%|███▌      | 280/791 [02:21<08:47,  1.03s/it] 36%|███▌      | 284/791 [02:22<06:51,  1.23it/s] 36%|███▋      | 288/791 [02:25<06:24,  1.31it/s] 37%|███▋      | 292/791 [02:27<06:01,  1.38it/s] 37%|███▋      | 296/791 [02:28<04:56,  1.67it/s] 38%|███▊      | 300/791 [02:30<04:14,  1.93it/s] 38%|███▊      | 304/791 [02:32<04:20,  1.87it/s] 39%|███▉      | 308/791 [02:34<04:09,  1.94it/s] 39%|███▉      | 312/791 [02:36<04:01,  1.99it/s] 40%|███▉      | 316/791 [02:39<04:34,  1.73it/s] 40%|████      | 320/791 [02:40<04:06,  1.91it/s] 41%|████      | 324/791 [02:42<03:53,  2.00it/s] 41%|████▏     | 328/791 [02:44<03:42,  2.08it/s] 42%|████▏     | 332/791 [02:46<03:41,  2.07it/s] 42%|████▏     | 336/791 [02:48<03:44,  2.03it/s] 43%|████▎     | 340/791 [02:51<04:32,  1.66it/s] 43%|████▎     | 344/791 [02:54<04:54,  1.52it/s] 44%|████▍     | 348/791 [02:57<04:54,  1.50it/s] 45%|████▍     | 352/791 [03:00<05:06,  1.43it/s] 45%|████▌     | 356/791 [03:02<04:18,  1.68it/s] 46%|████▌     | 360/791 [03:05<04:44,  1.51it/s] 46%|████▌     | 364/791 [03:07<04:31,  1.57it/s] 47%|████▋     | 368/791 [03:10<04:38,  1.52it/s] 47%|████▋     | 372/791 [03:11<03:46,  1.85it/s] 48%|████▊     | 376/791 [03:13<03:25,  2.02it/s] 48%|████▊     | 380/791 [03:14<03:05,  2.21it/s] 49%|████▊     | 384/791 [03:16<03:05,  2.19it/s] 49%|████▉     | 388/791 [03:18<03:21,  2.00it/s] 50%|████▉     | 392/791 [03:22<04:15,  1.56it/s] 50%|█████     | 396/791 [03:24<03:50,  1.71it/s] 51%|█████     | 400/791 [03:28<04:19,  1.51it/s] 51%|█████     | 404/791 [03:30<04:09,  1.55it/s] 52%|█████▏    | 408/791 [03:33<04:06,  1.55it/s] 52%|█████▏    | 412/791 [03:35<03:53,  1.62it/s] 53%|█████▎    | 416/791 [03:36<03:21,  1.86it/s] 53%|█████▎    | 420/791 [03:38<03:00,  2.05it/s] 54%|█████▎    | 424/791 [03:41<03:41,  1.66it/s] 54%|█████▍    | 428/791 [03:44<03:58,  1.52it/s] 55%|█████▍    | 432/791 [03:46<03:23,  1.77it/s] 55%|█████▌    | 436/791 [03:49<03:37,  1.63it/s] 56%|█████▌    | 440/791 [03:50<03:18,  1.77it/s] 56%|█████▌    | 444/791 [03:52<02:57,  1.95it/s] 57%|█████▋    | 448/791 [03:54<03:00,  1.90it/s] 57%|█████▋    | 452/791 [03:55<02:31,  2.24it/s] 58%|█████▊    | 456/791 [03:56<02:15,  2.48it/s] 58%|█████▊    | 460/791 [03:58<02:25,  2.27it/s] 59%|█████▊    | 464/791 [03:59<02:03,  2.64it/s] 59%|█████▉    | 468/791 [04:02<02:18,  2.33it/s] 60%|█████▉    | 472/791 [04:03<02:08,  2.48it/s] 60%|██████    | 476/791 [04:07<02:52,  1.83it/s] 61%|██████    | 480/791 [04:09<02:50,  1.83it/s] 61%|██████    | 484/791 [04:11<02:53,  1.77it/s] 62%|██████▏   | 488/791 [04:14<02:54,  1.74it/s] 62%|██████▏   | 492/791 [04:16<02:47,  1.79it/s] 63%|██████▎   | 496/791 [04:17<02:20,  2.11it/s] 63%|██████▎   | 500/791 [04:18<02:04,  2.34it/s] 64%|██████▎   | 504/791 [04:19<01:54,  2.50it/s] 64%|██████▍   | 508/791 [04:23<02:45,  1.71it/s] 65%|██████▍   | 512/791 [04:28<03:28,  1.34it/s] 65%|██████▌   | 516/791 [04:31<03:31,  1.30it/s] 66%|██████▌   | 520/791 [04:33<03:04,  1.47it/s] 66%|██████▌   | 524/791 [04:35<02:51,  1.55it/s] 67%|██████▋   | 528/791 [04:37<02:26,  1.79it/s] 67%|██████▋   | 532/791 [04:39<02:21,  1.84it/s] 68%|██████▊   | 536/791 [04:41<02:27,  1.73it/s] 68%|██████▊   | 540/791 [04:48<03:38,  1.15it/s] 69%|██████▉   | 544/791 [04:49<02:55,  1.41it/s] 69%|██████▉   | 548/791 [04:52<02:58,  1.36it/s] 70%|██████▉   | 552/791 [04:54<02:29,  1.60it/s] 70%|███████   | 556/791 [04:55<02:09,  1.82it/s] 71%|███████   | 560/791 [04:56<01:48,  2.13it/s] 71%|███████▏  | 564/791 [04:59<01:54,  1.99it/s] 72%|███████▏  | 568/791 [05:02<02:11,  1.70it/s] 72%|███████▏  | 572/791 [05:04<02:10,  1.68it/s] 73%|███████▎  | 576/791 [05:05<01:48,  1.97it/s] 73%|███████▎  | 580/791 [05:08<01:49,  1.92it/s] 74%|███████▍  | 584/791 [05:09<01:40,  2.05it/s] 74%|███████▍  | 588/791 [05:12<01:45,  1.92it/s] 75%|███████▍  | 592/791 [05:14<01:49,  1.82it/s] 75%|███████▌  | 596/791 [05:18<02:12,  1.48it/s] 76%|███████▌  | 600/791 [05:20<01:52,  1.70it/s] 76%|███████▋  | 604/791 [05:21<01:38,  1.90it/s] 77%|███████▋  | 608/791 [05:23<01:33,  1.96it/s] 77%|███████▋  | 612/791 [05:25<01:29,  2.00it/s] 78%|███████▊  | 616/791 [05:28<01:39,  1.76it/s] 78%|███████▊  | 620/791 [05:30<01:38,  1.74it/s] 79%|███████▉  | 624/791 [05:33<01:46,  1.57it/s] 79%|███████▉  | 628/791 [05:37<01:57,  1.38it/s] 80%|███████▉  | 632/791 [05:38<01:30,  1.75it/s] 80%|████████  | 636/791 [05:41<01:35,  1.62it/s] 81%|████████  | 640/791 [05:43<01:26,  1.75it/s] 81%|████████▏ | 644/791 [05:45<01:28,  1.66it/s] 82%|████████▏ | 648/791 [05:46<01:10,  2.03it/s] 82%|████████▏ | 652/791 [05:50<01:23,  1.66it/s] 83%|████████▎ | 656/791 [05:51<01:12,  1.86it/s] 83%|████████▎ | 660/791 [05:54<01:18,  1.67it/s] 84%|████████▍ | 664/791 [05:56<01:08,  1.85it/s] 84%|████████▍ | 668/791 [05:58<01:10,  1.74it/s] 85%|████████▍ | 672/791 [06:00<01:02,  1.90it/s] 85%|████████▌ | 676/791 [06:02<00:58,  1.95it/s] 86%|████████▌ | 680/791 [06:06<01:11,  1.56it/s] 86%|████████▋ | 684/791 [06:08<01:05,  1.62it/s] 87%|████████▋ | 688/791 [06:11<01:04,  1.60it/s] 87%|████████▋ | 692/791 [06:12<00:54,  1.81it/s] 88%|████████▊ | 696/791 [06:14<00:52,  1.81it/s] 88%|████████▊ | 700/791 [06:15<00:41,  2.20it/s] 89%|████████▉ | 704/791 [06:17<00:39,  2.21it/s] 90%|████████▉ | 708/791 [06:19<00:40,  2.07it/s] 90%|█████████ | 712/791 [06:21<00:36,  2.18it/s] 91%|█████████ | 716/791 [06:23<00:38,  1.94it/s] 91%|█████████ | 720/791 [06:25<00:35,  2.00it/s] 92%|█████████▏| 724/791 [06:28<00:37,  1.79it/s] 92%|█████████▏| 728/791 [06:30<00:32,  1.92it/s] 93%|█████████▎| 732/791 [06:32<00:30,  1.93it/s] 93%|█████████▎| 736/791 [06:35<00:34,  1.61it/s] 94%|█████████▎| 740/791 [06:37<00:30,  1.67it/s] 94%|█████████▍| 744/791 [06:39<00:26,  1.80it/s] 95%|█████████▍| 748/791 [06:41<00:23,  1.83it/s] 95%|█████████▌| 752/791 [06:43<00:19,  1.96it/s] 96%|█████████▌| 756/791 [06:45<00:17,  2.05it/s] 96%|█████████▌| 760/791 [06:48<00:17,  1.77it/s] 97%|█████████▋| 764/791 [06:51<00:16,  1.62it/s] 97%|█████████▋| 768/791 [06:52<00:12,  1.81it/s] 98%|█████████▊| 772/791 [06:55<00:10,  1.77it/s] 98%|█████████▊| 776/791 [06:59<00:10,  1.45it/s] 99%|█████████▊| 780/791 [07:03<00:08,  1.24it/s] 99%|█████████▉| 784/791 [07:07<00:06,  1.15it/s]100%|█████████▉| 788/791 [07:12<00:02,  1.06it/s]100%|██████████| 791/791 [07:12<00:00,  1.83it/s]
+Entropy threshold automatically set to 0.12037562469173402.
+727.0 out of 791 genes kept in filtered core genome
+[Thu May  8 09:24:37 2025]
+Finished job 20.
+22 of 30 steps (73%) done
+Select jobs to execute...
+
+[Thu May  8 09:24:37 2025]
+rule extract_tigr_grna:
+    input: results/panaroo/core_gene_alignment_filtered.aln
+    output: results/tigr_grna_18mers.tsv
+    jobid: 21
+    reason: Missing output files: results/tigr_grna_18mers.tsv; Input files updated by another job: results/panaroo/core_gene_alignment_filtered.aln
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+Total alignment length: 755037
+Number of genomes: 15
+=== TIGR gRNA Extraction Report ===
+Total 18-mer windows scanned: 755020
+Skipped due to gaps: 23307
+Skipped due to non-conservation: 645261
+Passed seed region filter: 86452
+Passed GC/homopolymer filter: 8668
+Written to file: 8668
+[Thu May  8 09:24:54 2025]
+Finished job 21.
+23 of 30 steps (77%) done
+Select jobs to execute...
+
+[Thu May  8 09:24:54 2025]
+rule build_conserved_18mer_fasta:
+    input: results/tigr_grna_18mers.tsv
+    output: results/panaroo/conserved_18mers.fa
+    jobid: 22
+    reason: Missing output files: results/panaroo/conserved_18mers.fa; Input files updated by another job: results/tigr_grna_18mers.tsv
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:24:55 2025]
+Finished job 22.
+24 of 30 steps (80%) done
+Select jobs to execute...
+
+[Thu May  8 09:24:55 2025]
+rule blast_tigr_grna_babesia:
+    input: results/panaroo/conserved_18mers.fa, results/blastdb/B_divergens_CCSG02.nin, results/blastdb/B_divergens_JAHBMH01.nin, results/blastdb/B_duncani_WA1.nin, results/blastdb/B_microti_RI.nin
+    output: results/blast/tigr/babesia_hits.tsv
+    jobid: 44
+    reason: Missing output files: results/blast/tigr/babesia_hits.tsv; Input files updated by another job: results/blastdb/B_divergens_CCSG02.nin, results/blastdb/B_duncani_WA1.nin, results/blastdb/B_divergens_JAHBMH01.nin, results/blastdb/B_microti_RI.nin, results/panaroo/conserved_18mers.fa; Code has changed since last execution
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:25:44 2025]
+Finished job 44.
+25 of 30 steps (83%) done
+Select jobs to execute...
+
+[Thu May  8 09:25:44 2025]
+rule select_shared_tigr_grna_with_babesia:
+    input: results/tigr_grna_18mers.tsv, results/blast/tigr/babesia_hits.tsv
+    output: results/shared_tigr_grna.tsv
+    jobid: 45
+    reason: Missing output files: results/shared_tigr_grna.tsv; Input files updated by another job: results/blast/tigr/babesia_hits.tsv, results/tigr_grna_18mers.tsv
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:25:45 2025]
+Finished job 45.
+26 of 30 steps (87%) done
+Select jobs to execute...
+
+[Thu May  8 09:25:45 2025]
+rule blast_shared_grna_against_contaminants:
+    input: results/shared_tigr_grna.tsv, results/blastdb/Ixodes_CAYQID01.nin, results/blastdb/Ixodes_CharlesRiver.nin, results/blastdb/Ixodes_Maya1009.nin, results/blastdb/Ixodes_Murphy0812.nin, results/blastdb/Ixodes_PV-2024.nin, results/blastdb/Midichloria_Ird3Mm.nin, results/blastdb/Midichloria_IricVA.nin, results/blastdb/Rickettsiella_32cd738c.nin, results/blastdb/Rickettsiella_54705.nin, results/blastdb/Rickettsiella_54706.nin, results/blastdb/Rickettsiella_54707.nin, results/blastdb/Rickettsiella_63004e16.nin, results/blastdb/Rickettsiella_Ap-RA04.nin, results/blastdb/Rickettsiella_DGE.nin, results/blastdb/Spiroplasma_SHM.nin, results/blastdb/Spiroplasma_Y32.nin, results/blastdb/Spiroplasma_sAp269.nin
+    output: results/blast/tigr/contaminant_hits.tsv
+    jobid: 46
+    reason: Missing output files: results/blast/tigr/contaminant_hits.tsv; Input files updated by another job: results/blastdb/Rickettsiella_54707.nin, results/blastdb/Ixodes_Murphy0812.nin, results/blastdb/Midichloria_Ird3Mm.nin, results/blastdb/Rickettsiella_Ap-RA04.nin, results/blastdb/Rickettsiella_63004e16.nin, results/blastdb/Spiroplasma_SHM.nin, results/blastdb/Spiroplasma_sAp269.nin, results/blastdb/Ixodes_PV-2024.nin, results/blastdb/Ixodes_Maya1009.nin, results/blastdb/Ixodes_CAYQID01.nin, results/blastdb/Rickettsiella_54706.nin, results/shared_tigr_grna.tsv, results/blastdb/Spiroplasma_Y32.nin, results/blastdb/Midichloria_IricVA.nin, results/blastdb/Rickettsiella_54705.nin, results/blastdb/Rickettsiella_DGE.nin, results/blastdb/Ixodes_CharlesRiver.nin, results/blastdb/Rickettsiella_32cd738c.nin
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:26:05 2025]
+Finished job 46.
+27 of 30 steps (90%) done
+Select jobs to execute...
+
+[Thu May  8 09:26:05 2025]
+rule filter_tigr_grna_hits:
+    input: results/shared_tigr_grna.tsv, results/blast/tigr/contaminant_hits.tsv
+    output: results/final_filtered_tigr_grna.tsv
+    jobid: 47
+    reason: Missing output files: results/final_filtered_tigr_grna.tsv; Input files updated by another job: results/shared_tigr_grna.tsv, results/blast/tigr/contaminant_hits.tsv
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:26:05 2025]
+Finished job 47.
+28 of 30 steps (93%) done
+Select jobs to execute...
+
+[Thu May  8 09:26:05 2025]
+rule summarize_grnas:
+    input: results/shared_tigr_grna.tsv, results/final_filtered_tigr_grna.tsv
+    output: results/tigr_grna_summary.txt
+    jobid: 48
+    reason: Missing output files: results/tigr_grna_summary.txt; Input files updated by another job: results/shared_tigr_grna.tsv, results/final_filtered_tigr_grna.tsv
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Select jobs to execute...
+[Thu May  8 09:26:06 2025]
+Finished job 48.
+29 of 30 steps (97%) done
+Select jobs to execute...
+
+[Thu May  8 09:26:06 2025]
+localrule all:
+    input: /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_PKo/B_afzelii_PKo_prokka/B_afzelii_PKo.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_BO23/B_afzelii_BO23_prokka/B_afzelii_BO23.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_K78/B_afzelii_K78_prokka/B_afzelii_K78.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_Tom3107/B_afzelii_Tom3107_prokka/B_afzelii_Tom3107.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PAbe/B_burgdorferi_PAbe_prokka/B_burgdorferi_PAbe.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_B31/B_burgdorferi_B31_prokka/B_burgdorferi_B31.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_NE5248/B_burgdorferi_NE5248_prokka/B_burgdorferi_NE5248.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_burgdorferi_PFheI/B_burgdorferi_PFheI_prokka/B_burgdorferi_PFheI.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBi/B_bavariensis_PBi_prokka/B_bavariensis_PBi.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_PBaell/B_bavariensis_PBaell_prokka/B_bavariensis_PBaell.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_bavariensis_NT24/B_bavariensis_NT24_prokka/B_bavariensis_NT24.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_PBes/B_garinii_PBes_prokka/B_garinii_PBes.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_20047/B_garinii_20047_prokka/B_garinii_20047.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_BgVir/B_garinii_BgVir_prokka/B_garinii_BgVir.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_garinii_NT31/B_garinii_NT31_prokka/B_garinii_NT31.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_CCSG02/B_divergens_CCSG02_prokka/B_divergens_CCSG02.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_divergens_JAHBMH01/B_divergens_JAHBMH01_prokka/B_divergens_JAHBMH01.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_duncani_WA1/B_duncani_WA1_prokka/B_duncani_WA1.gff, /scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/B_microti_RI/B_microti_RI_prokka/B_microti_RI.gff, results/panaroo/core_gene_alignment_filtered.aln, results/tigr_grna_18mers.tsv, results/panaroo/conserved_18mers.fa, results/blastdb/B_divergens_CCSG02.nin, results/blastdb/B_divergens_JAHBMH01.nin, results/blastdb/B_duncani_WA1.nin, results/blastdb/B_microti_RI.nin, results/blastdb/Ixodes_CAYQID01.nin, results/blastdb/Ixodes_CharlesRiver.nin, results/blastdb/Ixodes_Maya1009.nin, results/blastdb/Ixodes_Murphy0812.nin, results/blastdb/Ixodes_PV-2024.nin, results/blastdb/Midichloria_Ird3Mm.nin, results/blastdb/Midichloria_IricVA.nin, results/blastdb/Rickettsiella_32cd738c.nin, results/blastdb/Rickettsiella_54705.nin, results/blastdb/Rickettsiella_54706.nin, results/blastdb/Rickettsiella_54707.nin, results/blastdb/Rickettsiella_63004e16.nin, results/blastdb/Rickettsiella_Ap-RA04.nin, results/blastdb/Rickettsiella_DGE.nin, results/blastdb/Spiroplasma_SHM.nin, results/blastdb/Spiroplasma_Y32.nin, results/blastdb/Spiroplasma_sAp269.nin, results/blast/tigr/babesia_hits.tsv, results/shared_tigr_grna.tsv, results/blast/tigr/contaminant_hits.tsv, results/final_filtered_tigr_grna.tsv, results/tigr_grna_summary.txt
+    jobid: 0
+    reason: Input files updated by another job: results/blastdb/B_divergens_CCSG02.nin, results/blastdb/Ixodes_Murphy0812.nin, results/blastdb/Spiroplasma_sAp269.nin, results/panaroo/core_gene_alignment_filtered.aln, results/blastdb/Rickettsiella_Ap-RA04.nin, results/blastdb/Spiroplasma_SHM.nin, results/blastdb/B_duncani_WA1.nin, results/final_filtered_tigr_grna.tsv, results/blastdb/Ixodes_PV-2024.nin, results/tigr_grna_18mers.tsv, results/blastdb/Rickettsiella_54706.nin, results/blast/tigr/babesia_hits.tsv, results/blastdb/Rickettsiella_54705.nin, results/blastdb/Midichloria_IricVA.nin, results/blastdb/Rickettsiella_54707.nin, results/blastdb/B_microti_RI.nin, results/blast/tigr/contaminant_hits.tsv, results/blastdb/Midichloria_Ird3Mm.nin, results/blastdb/Rickettsiella_63004e16.nin, results/blastdb/Ixodes_Maya1009.nin, results/tigr_grna_summary.txt, results/blastdb/Ixodes_CAYQID01.nin, results/shared_tigr_grna.tsv, results/blastdb/Spiroplasma_Y32.nin, results/blastdb/B_divergens_JAHBMH01.nin, results/panaroo/conserved_18mers.fa, results/blastdb/Rickettsiella_DGE.nin, results/blastdb/Ixodes_CharlesRiver.nin, results/blastdb/Rickettsiella_32cd738c.nin
+    resources: tmpdir=/tmp/slurm-vira9982-171012
+
+[Thu May  8 09:26:06 2025]
+Finished job 0.
+30 of 30 steps (100%) done
+Complete log: .snakemake/log/2025-05-08T091426.419955.snakemake.log
