@@ -17,8 +17,8 @@ samples = {
     "B_garinii_20047": "Borrelia",
     "B_garinii_BgVir": "Borrelia",
     "B_garinii_NT31": "Borrelia",
-    "B_divergens_CCSG02": "Babesia",
-    "B_divergens_JAHBMH01": "Babesia",
+    "B_divergens_1802A": "Babesia",
+    "B_divergens_Rouen1987": "Babesia",
     "B_duncani_WA1": "Babesia",
     "B_microti_RI": "Babesia"
 }
@@ -51,25 +51,28 @@ contaminant_strains = [s for s, _ in contaminant_pairs]
 
 rule all:
     input:
-        expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka/{sample}.gff",
-               zip, sample=[s for s, g in sample_genus_pairs], genus=[g for s, g in sample_genus_pairs]),
+        expand("/scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/{sample}/{sample}_prokka/{sample}.gff", sample=borrelia_samples),
         "results/panaroo/core_gene_alignment_filtered.aln",
         "results/tigr_grna_18mers.tsv",
-        "results/panaroo/conserved_18mers.fa",
-        expand("results/blastdb/{strain}.nin", strain=babesia_samples + contaminant_strains),
-        "results/blast/tigr/babesia_hits.tsv",
-        "results/shared_tigr_grna.tsv",
-        "results/blast/tigr/contaminant_hits.tsv",
-        "results/final_filtered_tigr_grna.tsv",
-        "results/tigr_grna_summary.txt"
+        "results/tigr_grna_with_primers.tsv",
+        "results/tigr_grna_primer_filter_stages.tsv"
+#        "results/tigr_grna_18mers.tsv",
+#        "results/panaroo/conserved_18mers.fa",
+#        expand("results/blastdb/{strain}.nin", strain=babesia_samples + contaminant_strains),
+#        "results/blast/tigr/babesia_hits.tsv",
+#        "results/shared_tigr_grna.tsv",
+#        "results/blast/tigr/contaminant_hits.tsv",
+#        "results/final_filtered_tigr_grna.tsv",
+#        "results/tigr_grna_summary.txt",
+#        "results/final_tigr_annotation.tsv"
 
 rule prokka:
     input:
-        fasta = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}.fna"
+        fasta = "/scratch/lustre/home/vira9982/Borreliella_target/Borrelia/{sample}/{sample}.fna"
     output:
-        gff = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka/{sample}.gff"
+        gff = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/{sample}/{sample}_prokka/{sample}.gff"
     params:
-        outdir = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/{genus}/{sample}/{sample}_prokka"
+        outdir = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/{sample}/{sample}_prokka"
     threads: 4
     conda: "envs/borrelia-env.yaml"
     shell:
@@ -79,7 +82,7 @@ rule prokka:
             --prefix {wildcards.sample} \
             --genus {wildcards.genus} \
             --cpus {threads} \
-            --usegenus --force
+            --addgenes --force
         """
 
 rule panaroo:
@@ -101,10 +104,13 @@ rule extract_tigr_grna:
     input:
         aln = "results/panaroo/core_gene_alignment_filtered.aln"
     output:
-        grna = "results/tigr_grna_18mers.tsv"
+        grna = "results/tigr_grna_18mers.tsv",
+        primers = "results/tigr_grna_with_primers.tsv",
+        primers_stages = "results/tigr_grna_primer_filter_stages.tsv"
     run:
         from Bio import AlignIO
         import re
+        from primer3 import bindings
 
         def is_valid_seed(spacer):
             seed = spacer[3:6]
@@ -117,11 +123,30 @@ rule extract_tigr_grna:
         def is_good_sequence(seq):
             if not set(seq).issubset(set("ACGT")):
                 return False
-            if gc_content(seq) < 0.35 or gc_content(seq) > 0.65:
+            if gc_content(seq) < 0.30 or gc_content(seq) > 0.70:
                 return False
-            if re.search(r'(A{4,}|T{4,}|C{4,}|G{4,})', seq):
+            if re.search(r'(A{5,}|T{5,}|C{5,}|G{5,})', seq):
                 return False
             return True
+
+        def is_good_primer(seq):
+            gc = gc_content(seq)
+            if len(seq) < 30 or len(seq) > 45:
+                return False
+            if gc < 0.3 or gc > 0.7:
+                return False
+            if re.search(r'(A{5,}|T{5,}|C{5,}|G{5,})', seq):
+                return False
+            return True
+
+        def has_secondary_structure(seq):
+            hairpin = bindings.calc_hairpin(seq)
+            if hairpin.structure_found and hairpin.dg < -9:
+                return True
+            dimer = bindings.calc_homodimer(seq)
+            if dimer.structure_found and dimer.dg < -9:
+                return True
+            return False
 
         alignment = AlignIO.read(input.aln, "fasta")
         aln_len = alignment.get_alignment_length()
@@ -134,24 +159,29 @@ rule extract_tigr_grna:
         conserved = 0
         passed_seed = 0
         passed_gc = 0
+        primer_gc_passed = 0
+        primer_structure_failed = 0
         written = 0
 
-        with open(output.grna, "w") as out:
-            out.write("gene_id\tstart\tspacerA\tspacerB\tcombined_18mer\n")
+        with open(output.grna, "w") as grna_out, open(output.primers, "w") as primer_out, open(output.primers_stages, "w") as stage_out:
+            grna_out.write("gene_id\tstart\tspacerA\tspacerB\tcombined_18mer\n")
+            primer_out.write("gene_id\tstart\tspacerA\tspacerB\tcombined_18mer\tleft_primer\tright_primer\n")
+            stage_out.write("stage\tgene_id\tstart\tspacerA\tspacerB\tcombined_18mer\tleft_primer\tright_primer\n")
 
-            for i in range(aln_len - 17):
+            for i in range(45, aln_len - 18 - 45):
                 total_windows += 1
-                window_seqs = [str(rec.seq[i:i+18]).upper() for rec in alignment]
+                region = [str(rec.seq[i-45:i+18+45]).upper() for rec in alignment]
 
-                if any("-" in seq for seq in window_seqs):
+                if any("-" in seq for seq in region):
                     gap_filtered += 1
                     continue
 
-                if len(set(window_seqs)) != 1:
+                if len(set(region)) != 1:
                     conserved += 1
                     continue
 
-                tig = window_seqs[0]
+                full_seq = region[0]  # conserved 108-nt region
+                tig = full_seq[45:63]
                 spacerA = tig[:9]
                 spacerB = tig[9:]
 
@@ -163,8 +193,28 @@ rule extract_tigr_grna:
                     continue
                 passed_gc += 1
 
-                out.write(f"conserved_block\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\n")
-                written += 1
+                gene_id = f"conserved_{i+1}"
+
+                left = right = None
+                for length in range(45, 29, -1):
+                    l_candidate = full_seq[45 - length:45]
+                    r_candidate = full_seq[63:63 + length]
+
+                    stage_out.write(f"tigr_pass\t{gene_id}\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\t{l_candidate}\t{r_candidate}\n")
+
+                    if is_good_primer(l_candidate) and is_good_primer(r_candidate):
+                        primer_gc_passed += 1
+                        stage_out.write(f"gc_only\t{gene_id}\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\t{l_candidate}\t{r_candidate}\n")
+                        if not has_secondary_structure(l_candidate) and not has_secondary_structure(r_candidate):
+                            left = l_candidate
+                            right = r_candidate
+                            grna_out.write(f"{gene_id}\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\n")
+                            primer_out.write(f"{gene_id}\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\t{left}\t{right}\n")
+                            stage_out.write(f"final\t{gene_id}\t{i+1}\t{spacerA}\t{spacerB}\t{tig}\t{left}\t{right}\n")
+                            written += 1
+                        else:
+                            primer_structure_failed += 1
+                        break
 
         print("=== TIGR gRNA Extraction Report ===")
         print(f"Total 18-mer windows scanned: {total_windows}")
@@ -172,154 +222,219 @@ rule extract_tigr_grna:
         print(f"Skipped due to non-conservation: {conserved}")
         print(f"Passed seed region filter: {passed_seed}")
         print(f"Passed GC/homopolymer filter: {passed_gc}")
-        print(f"Written to file: {written}")
-
-
-rule build_conserved_18mer_fasta:
-    input:
-        grna = "results/tigr_grna_18mers.tsv"
-    output:
-        fa = "results/panaroo/conserved_18mers.fa"
-    run:
-        with open(input.grna) as tsv, open(output.fa, "w") as out:
-            next(tsv)
-            for line in tsv:
-                fields = line.strip().split("\t")
-                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
-
-rule make_blast_db_babesia:
-    input:
-        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/{wc.strain}/{wc.strain}.fna"
-    output:
-        db = "results/blastdb/{strain}.nin"
-    shell:
-        """
-        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
-        """
-
-rule blast_tigr_grna_babesia:
-    input:
-        grna = "results/panaroo/conserved_18mers.fa",
-        dbs = expand("results/blastdb/{strain}.nin", strain=babesia_samples)
-    output:
-        "results/blast/tigr/babesia_hits.tsv"
-    run:
-        import subprocess
-        from pathlib import Path
-        grna_fa = input.grna
-        all_hits = ""
-        for db_path in input.dbs:
-            cmd = f"blastn -query {grna_fa} -db {db_path[:-4]} -task blastn-short -word_size 7 -perc_identity 95 -evalue 1e-3 -outfmt 6"
-            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-            all_hits += hits.stdout
-        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
-        with open(output[0], "w") as out:
-            out.write(all_hits)
-
-rule select_shared_tigr_grna_with_babesia:
-    input:
-        grna = "results/tigr_grna_18mers.tsv",
-        babesia_hits = "results/blast/tigr/babesia_hits.tsv"
-    output:
-        "results/shared_tigr_grna.tsv"
-    run:
-        from collections import defaultdict
-
-        # Track which gRNAs matched which Babesia strain
-        hit_map = defaultdict(set)
-
-        with open(input.babesia_hits) as f:
-            for line in f:
-                fields = line.strip().split("\t")
-                query = fields[0]  # gRNA ID (e.g. conserved_block_3_103)
-                db = fields[1]     # subject ID — includes strain info
-                hit_map[query].add(db)
-
-        # Count how many unique Babesia strains
-        expected_strains = set(s.replace("results/blastdb/", "").replace(".nin", "") for s in babesia_samples)
-
-        # Determine which gRNAs matched all strains
-        shared = set()
-        for grna_id, strains in hit_map.items():
-            if len(strains) == len(babesia_samples):
-                shared.add(grna_id)
-
-        with open(input.grna) as grna_in, open(output[0], "w") as out:
-            header = grna_in.readline()
-            out.write(header)
-            for line in grna_in:
-                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
-                if gid in shared:
-                    out.write(line)         
-
-rule make_blast_db:
-    input:
-        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/{contaminants[wc.strain]}/{wc.strain}.fna"
-    output:
-        db = "results/blastdb/{strain}.nin"
-    shell:
-        """
-        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
-        """
-
-rule blast_shared_grna_against_contaminants:
-    input:
-        grna = "results/shared_tigr_grna.tsv",
-        dbs = expand("results/blastdb/{strain}.nin", strain=contaminant_strains)
-    output:
-        "results/blast/tigr/contaminant_hits.tsv"
-    run:
-        import subprocess
-        from pathlib import Path
-
-        fasta_file = "results/shared_18mers_temp.fa"
-        with open(input.grna) as tsv, open(fasta_file, "w") as out:
-            next(tsv)
-            for line in tsv:
-                fields = line.strip().split("\t")
-                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
-
-        all_hits = ""
-        for db_path in input.dbs:
-            cmd = f"blastn -query {fasta_file} -db {db_path[:-4]} -task blastn-short -word_size 7 -perc_identity 90 -evalue 1e-2 -outfmt 6"
-            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-            all_hits += hits.stdout
-
-        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
-        with open(output[0], "w") as out:
-            out.write(all_hits)
-
-rule filter_tigr_grna_hits:
-    input:
-        grna = "results/shared_tigr_grna.tsv",
-        hits = "results/blast/tigr/contaminant_hits.tsv"
-    output:
-        "results/final_filtered_tigr_grna.tsv"
-    run:
-        contaminated = set()
-        with open(input.hits) as f:
-            for line in f:
-                query = line.split("\t")[0]
-                contaminated.add(query)
-        with open(input.grna) as grna_in, open(output[0], "w") as out:
-            header = grna_in.readline()
-            out.write(header)
-            for line in grna_in:
-                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
-                if gid not in contaminated:
-                    out.write(line)
-
-rule summarize_grnas:
-    input:
-        all_grnas = "results/shared_tigr_grna.tsv",
-        filtered = "results/final_filtered_tigr_grna.tsv"
-    output:
-        "results/tigr_grna_summary.txt"
-    run:
-        with open(input.all_grnas) as a:
-            total = sum(1 for _ in a) - 1
-        with open(input.filtered) as f:
-            final = sum(1 for _ in f) - 1
-        with open(output[0], "w") as out:
-            out.write(f"Total gRNA candidates: {total}\n")
-            out.write(f"Filtered (contaminants removed): {final}\n")
+        print(f"Primers passed basic GC/homopolymer checks: {primer_gc_passed}")
+        print(f"Primers failed secondary structure check: {primer_structure_failed}")
+        print(f"Written with valid primers: {written}")
+      
+#
+#rule build_conserved_18mer_fasta:
+#    input:
+#        grna = "results/tigr_grna_18mers.tsv"
+#    output:
+#        fa = "results/panaroo/conserved_18mers.fa"
+#    run:
+#        with open(input.grna) as tsv, open(output.fa, "w") as out:
+#            next(tsv)
+#            for line in tsv:
+#                fields = line.strip().split("\t")
+#                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
+#
+#rule make_blast_db_babesia:
+#    input:
+#        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/{wc.strain}/{wc.strain}.fna"
+#    output:
+#        db = "results/blastdb/{strain}.nin"
+#    shell:
+#        """
+#        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
+#        """
+#
+#rule blast_tigr_grna_babesia:
+#    input:
+#        grna = "results/panaroo/conserved_18mers.fa",
+#        dbs = expand("results/blastdb/{strain}.nin", strain=babesia_samples)
+#    output:
+#        "results/blast/tigr/babesia_hits.tsv"
+#    run:
+#        import subprocess
+#        from pathlib import Path
+#        grna_fa = input.grna
+#        all_hits = ""
+#        for db_path in input.dbs:
+#            cmd = f"""blastn -query {grna_fa} -db {db_path[:-4]} \
+#			-task blastn-short -word_size 7 -perc_identity 90 -evalue 1e-3 \
+#			-outfmt '6 qseqid sseqid pident length mismatch qstart sstart qseq sseq'"""
+#            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+#            all_hits += hits.stdout
+#        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
+#        with open(output[0], "w") as out:
+#            out.write(all_hits)
+#
+#rule select_shared_tigr_grna_with_babesia:
+#    input:
+#        grna = "results/tigr_grna_18mers.tsv",
+#        babesia_hits = "results/blast/tigr/babesia_hits.tsv"
+#    output:
+#        "results/shared_tigr_grna.tsv"
+#    run:
+#        from collections import defaultdict
+#
+#        # Track which gRNAs matched which Babesia strain
+#        hit_map = defaultdict(set)
+#
+#        with open(input.babesia_hits) as f:
+#            for line in f:
+#                fields = line.strip().split("\t")
+#                query = fields[0]  # gRNA ID (e.g. conserved_block_3_103)
+#                db = fields[1]     # subject ID — includes strain info
+#                hit_map[query].add(db)
+#
+#        # Count how many unique Babesia strains
+#        expected_strains = set(s.replace("results/blastdb/", "").replace(".nin", "") for s in babesia_samples)
+#
+#        # Determine which gRNAs matched all strains
+#        shared = set()
+#        for grna_id, strains in hit_map.items():
+#            if len(strains) == len(babesia_samples):
+#                shared.add(grna_id)
+#
+#        with open(input.grna) as grna_in, open(output[0], "w") as out:
+#            header = grna_in.readline()
+#            out.write(header)
+#            for line in grna_in:
+#                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
+#                if gid in shared:
+#                    out.write(line)         
+#
+#rule make_blast_db:
+#    input:
+#        fasta = lambda wc: f"/scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/{contaminants[wc.strain]}/{wc.strain}.fna"
+#    output:
+#        db = "results/blastdb/{strain}.nin"
+#    shell:
+#        """
+#        makeblastdb -in {input.fasta} -dbtype nucl -out results/blastdb/{wildcards.strain}
+#        """
+#
+#rule blast_shared_grna_against_contaminants:
+#    input:
+#        grna = "results/shared_tigr_grna.tsv",
+#        dbs = expand("results/blastdb/{strain}.nin", strain=contaminant_strains)
+#    output:
+#        "results/blast/tigr/contaminant_hits.tsv"
+#    run:
+#        import subprocess
+#        from pathlib import Path
+#
+#        fasta_file = "results/shared_18mers_temp.fa"
+#        with open(input.grna) as tsv, open(fasta_file, "w") as out:
+#            next(tsv)
+#            for line in tsv:
+#                fields = line.strip().split("\t")
+#                out.write(f">{fields[0]}_{fields[1]}\n{fields[4]}\n")
+#
+#        all_hits = ""
+#        for db_path in input.dbs:
+#            cmd = f"blastn -query {fasta_file} -db {db_path[:-4]} -task blastn-short -word_size 7 -perc_identity 90 -evalue 1e-2 -outfmt 6"
+#            hits = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+#            all_hits += hits.stdout
+#
+#        Path("results/blast/tigr").mkdir(parents=True, exist_ok=True)
+#        with open(output[0], "w") as out:
+#            out.write(all_hits)
+#
+#rule filter_tigr_grna_hits:
+#    input:
+#        grna = "results/shared_tigr_grna.tsv",
+#        hits = "results/blast/tigr/contaminant_hits.tsv"
+#    output:
+#        "results/final_filtered_tigr_grna.tsv"
+#    run:
+#        contaminated = set()
+#        with open(input.hits) as f:
+#            for line in f:
+#                query = line.split("\t")[0]
+#                contaminated.add(query)
+#        with open(input.grna) as grna_in, open(output[0], "w") as out:
+#            header = grna_in.readline()
+#            out.write(header)
+#            for line in grna_in:
+#                gid = line.split("\t")[0] + "_" + line.split("\t")[1]
+#                if gid not in contaminated:
+#                    out.write(line)
+#
+#rule summarize_grnas:
+#    input:
+#        all_grnas = "results/shared_tigr_grna.tsv",
+#        filtered = "results/final_filtered_tigr_grna.tsv"
+#    output:
+#        "results/tigr_grna_summary.txt"
+#    run:
+#        with open(input.all_grnas) as a:
+#            total = sum(1 for _ in a) - 1
+#        with open(input.filtered) as f:
+#            final = sum(1 for _ in f) - 1
+#        with open(output[0], "w") as out:
+#            out.write(f"Total gRNA candidates: {total}\n")
+#            out.write(f"Filtered (contaminants removed): {final}\n")
+#
+#rule annotate_final_tigr:
+#    input:
+#        grna = "results/final_filtered_tigr_grna.tsv",
+#        hits = "results/blast/tigr/babesia_hits.tsv"
+#    output:
+#        "results/final_tigr_annotation.tsv"
+#    run:
+#        from collections import defaultdict
+#
+#        mismatches = defaultdict(list)
+#        info = defaultdict(list)
+#
+#        with open(input.hits) as f:
+#            for line in f:
+#                fields = line.strip().split("\t")
+#                qseq = fields[0]  # query ID
+#                sseq = fields[1]  # subject ID (strain or contig)
+#                q_aln = fields[2] # aligned query sequence
+#                s_aln = fields[3] # aligned subject sequence
+#                qstart = fields[4]
+#                sstart = fields[5]
+#                mismatch_count = int(fields[6])
+#                pident = fields[7]
+#                length = fields[8]
+#
+#                # Collect mismatch info (if any)
+#                mismatch_detail = []
+#                for i, (q, s) in enumerate(zip(q_aln, s_aln), start=1):
+#                    if q != s:
+#                        mismatch_detail.append(f"pos{i}:{q}>{s}")
+#
+#                info[qseq].append({
+#                    "strain": sseq,
+#                    "identity": pident,
+#                    "mismatch_count": mismatch_count,
+#                    "mismatches": ",".join(mismatch_detail),
+#                    "qstart": qstart,
+#                    "sstart": sstart,
+#                    "length": length
+#                })
+#
+#        with open(input.grna) as grna_in, open(output[0], "w") as out:
+#            header = grna_in.readline().strip()
+#            out.write(header + "\tmatched_strains\tmismatch_summary\n")
+#
+#            for line in grna_in:
+#                fields = line.strip().split("\t")
+#                gid = fields[0]
+#
+#                if gid in info:
+#                    matched = [entry["strain"] for entry in info[gid]]
+#                    mismatch_summaries = [
+#                        f"{entry['strain']}({entry['identity']}% id, {entry['mismatch_count']} mismatches: {entry['mismatches']})"
+#                        for entry in info[gid]
+#                    ]
+#                    out.write(line.strip() + "\t" + ";".join(matched) + "\t" + ";".join(mismatch_summaries) + "\n")
+#                else:
+#                    out.write(line.strip() + "\tNone\tNone\n")
+#
+#

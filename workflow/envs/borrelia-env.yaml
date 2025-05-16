@@ -11,3 +11,4 @@ dependencies:
   - bedtools
   - mafft
   - blast
+  - primer3-py
