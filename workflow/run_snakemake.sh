@@ -5,6 +5,6 @@
 
 source ~/miniconda3/etc/profile.d/conda.sh
 
-conda activate borrelia
+conda activate target_search
 
 snakemake -p all --use-conda --cores 10 --latency-wait 60
