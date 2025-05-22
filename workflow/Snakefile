@@ -51,7 +51,9 @@ rule all:
         "results/parsnp_Borrelia/parsnp/parsnp.xmfa",
         "results/parsnp_Borrelia/parsnp/parsnp.tree",
         "results/parsnp_Borrelia/parsnp/parsnp.ggr",
-        "results/parsnp_Borrelia/core_borrelia_reference.fasta"
+        "results/parsnp_Borrelia/core_borrelia_reference.fasta",
+        expand("results/mummer/{sample}/align.filtered.delta", sample=babesia_samples.keys()),
+        expand("results/mummer/{sample}/align.coords", sample=babesia_samples.keys())
 
 rule parsnp:
     input:
@@ -95,3 +97,24 @@ rule xmfa_to_fasta:
         fasta = "results/parsnp_Borrelia/core_borrelia_reference.fasta"
     script:
         "scripts/xmfa_to_core_fasta.py"
+
+rule mummer_align_babesia:
+    input:
+        ref = "results/parsnp_Borrelia/core_borrelia_reference.fasta",
+        query = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/Babesia/{sample}/{sample}.fna"
+    output:
+        delta = "results/mummer/{sample}/align.filtered.delta",
+        coords = "results/mummer/{sample}/align.coords"
+    params:
+        prefix = "results/mummer/{sample}/align"
+    threads: 8
+    shell:
+        """
+        mkdir -p results/mummer/{wildcards.sample}
+
+        nucmer --maxmatch --nosimplify --minmatch=18 --mincluster=18 -p {params.prefix} {input.ref} {input.query}
+
+        delta-filter -i 100 -l 18 {params.prefix}.delta > {output.delta}
+
+        show-coords -rcl -T {output.delta} > {output.coords}
+        """
