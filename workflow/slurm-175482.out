@@ -1,0 +1,81 @@
+Assuming unrestricted shared filesystem usage.
+host: node-23
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job stats:
+job              count
+-------------  -------
+all                  1
+coords_to_bed        4
+total                5
+
+Select jobs to execute...
+Execute 4 jobs...
+
+[Thu May 22 22:01:57 2025]
+localrule coords_to_bed:
+    input: results/mummer/B_divergens_Rouen1987/align.coords
+    output: results/mummer/B_divergens_Rouen1987/align.bed
+    jobid: 8
+    reason: Missing output files: results/mummer/B_divergens_Rouen1987/align.bed
+    wildcards: sample=B_divergens_Rouen1987
+    resources: tmpdir=/tmp/slurm-vira9982-175482
+Shell command: None
+
+[Thu May 22 22:01:57 2025]
+localrule coords_to_bed:
+    input: results/mummer/B_divergens_1802A/align.coords
+    output: results/mummer/B_divergens_1802A/align.bed
+    jobid: 7
+    reason: Missing output files: results/mummer/B_divergens_1802A/align.bed
+    wildcards: sample=B_divergens_1802A
+    resources: tmpdir=/tmp/slurm-vira9982-175482
+Shell command: None
+
+[Thu May 22 22:01:57 2025]
+localrule coords_to_bed:
+    input: results/mummer/B_microti_RI/align.coords
+    output: results/mummer/B_microti_RI/align.bed
+    jobid: 10
+    reason: Missing output files: results/mummer/B_microti_RI/align.bed
+    wildcards: sample=B_microti_RI
+    resources: tmpdir=/tmp/slurm-vira9982-175482
+Shell command: None
+
+[Thu May 22 22:01:57 2025]
+localrule coords_to_bed:
+    input: results/mummer/B_duncani_WA1/align.coords
+    output: results/mummer/B_duncani_WA1/align.bed
+    jobid: 9
+    reason: Missing output files: results/mummer/B_duncani_WA1/align.bed
+    wildcards: sample=B_duncani_WA1
+    resources: tmpdir=/tmp/slurm-vira9982-175482
+Shell command: None
+[Thu May 22 22:01:58 2025]
+Finished jobid: 7 (Rule: coords_to_bed)
+1 of 5 steps (20%) done
+[Thu May 22 22:01:58 2025]
+Finished jobid: 9 (Rule: coords_to_bed)
+2 of 5 steps (40%) done
+[Thu May 22 22:01:58 2025]
+Finished jobid: 10 (Rule: coords_to_bed)
+3 of 5 steps (60%) done
+[Thu May 22 22:01:58 2025]
+Finished jobid: 8 (Rule: coords_to_bed)
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May 22 22:01:58 2025]
+localrule all:
+    input: results/parsnp_Borrelia/parsnp/parsnp.xmfa, results/parsnp_Borrelia/parsnp/parsnp.tree, results/parsnp_Borrelia/parsnp/parsnp.ggr, results/parsnp_Borrelia/core_borrelia_reference.fasta, results/mummer/B_divergens_1802A/align.filtered.delta, results/mummer/B_divergens_Rouen1987/align.filtered.delta, results/mummer/B_duncani_WA1/align.filtered.delta, results/mummer/B_microti_RI/align.filtered.delta, results/mummer/B_divergens_1802A/align.coords, results/mummer/B_divergens_Rouen1987/align.coords, results/mummer/B_duncani_WA1/align.coords, results/mummer/B_microti_RI/align.coords, results/mummer/B_divergens_1802A/align.bed, results/mummer/B_divergens_Rouen1987/align.bed, results/mummer/B_duncani_WA1/align.bed, results/mummer/B_microti_RI/align.bed
+    jobid: 0
+    reason: Input files updated by another job: results/mummer/B_microti_RI/align.bed, results/mummer/B_divergens_1802A/align.bed, results/mummer/B_duncani_WA1/align.bed, results/mummer/B_divergens_Rouen1987/align.bed
+    resources: tmpdir=/tmp/slurm-vira9982-175482
+Shell command: None
+[Thu May 22 22:01:58 2025]
+Finished jobid: 0 (Rule: all)
+5 of 5 steps (100%) done
+Complete log(s): /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow/.snakemake/log/2025-05-22T220151.566233.snakemake.log

@@ -53,7 +53,8 @@ rule all:
         "results/parsnp_Borrelia/parsnp/parsnp.ggr",
         "results/parsnp_Borrelia/core_borrelia_reference.fasta",
         expand("results/mummer/{sample}/align.filtered.delta", sample=babesia_samples.keys()),
-        expand("results/mummer/{sample}/align.coords", sample=babesia_samples.keys())
+        expand("results/mummer/{sample}/align.coords", sample=babesia_samples.keys()),
+        expand("results/mummer/{sample}/align.bed", sample=babesia_samples.keys())
 
 rule parsnp:
     input:
@@ -118,3 +119,11 @@ rule mummer_align_babesia:
 
         show-coords -rcl -T {output.delta} > {output.coords}
         """
+
+rule coords_to_bed:
+    input:
+        coords = "results/mummer/{sample}/align.coords"
+    output:
+        bed = "results/mummer/{sample}/align.bed"
+    script:
+        "scripts/coords_to_bed.py"
