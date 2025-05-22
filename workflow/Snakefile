@@ -50,7 +50,8 @@ rule all:
     input:
         "results/parsnp_Borrelia/parsnp/parsnp.xmfa",
         "results/parsnp_Borrelia/parsnp/parsnp.tree",
-        "results/parsnp_Borrelia/parsnp/parsnp.ggr"
+        "results/parsnp_Borrelia/parsnp/parsnp.ggr",
+        "results/parsnp_Borrelia/core_borrelia_reference.fasta"
 
 rule parsnp:
     input:
@@ -87,3 +88,10 @@ rule parsnp:
         parsnp -r {input.reference_genome} -d {params.genomes_dir} -p {threads} -o {params.output_dir} --fo
         """
 
+rule xmfa_to_fasta:
+    input:
+        xmfa = "results/parsnp_Borrelia/parsnp/parsnp.xmfa"
+    output:
+        fasta = "results/parsnp_Borrelia/core_borrelia_reference.fasta"
+    script:
+        "scripts/xmfa_to_core_fasta.py"
