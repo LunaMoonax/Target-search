@@ -54,7 +54,9 @@ rule all:
         "results/parsnp_Borrelia/core_borrelia_reference.fasta",
         expand("results/mummer/{sample}/align.filtered.delta", sample=babesia_samples.keys()),
         expand("results/mummer/{sample}/align.coords", sample=babesia_samples.keys()),
-        expand("results/mummer/{sample}/align.bed", sample=babesia_samples.keys())
+        expand("results/mummer/{sample}/align.bed", sample=babesia_samples.keys()),
+        "results/multiinter/all_regions.bed",
+        "results/multiinter/fully_conserved.bed"
 
 rule parsnp:
     input:
@@ -127,3 +129,16 @@ rule coords_to_bed:
         bed = "results/mummer/{sample}/align.bed"
     script:
         "scripts/coords_to_bed.py"
+
+rule multiinter_concerved:
+    input:
+        beds = expand("results/mummer/{sample}/align.bed", sample=babesia_samples.keys())
+    output:
+        raw = "results/multiinter/all_regions.bed",
+        filtered = "results/multiinter/fully_conserved.bed"
+    run:
+        import os
+        n = len(input.beds)
+        os.makedirs("results/multiinter", exist_ok=True)
+        shell(f"bedtools multiinter -i {' '.join(input.beds)} > {output.raw}")
+        shell(f"awk '$4 == {n}' {output.raw} | cut -f1-3 > {output.filtered}")
