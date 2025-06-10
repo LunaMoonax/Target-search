@@ -9,3 +9,6 @@ dependencies:
   - blast
   - pandas
   - primedrpa
+  - primer3-py
+  - numpy
+  - biopython

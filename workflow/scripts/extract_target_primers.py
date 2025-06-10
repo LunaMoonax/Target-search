@@ -1,6 +1,5 @@
 """
-Extract 100% conserved 18nt target sequences with 60nt primer regions
-Allows up to 6 mismatches in primer regions for subsequent PrimedRPA validation
+Extract 100% conserved 18nt target sequences with possible primer regions
 """
 
 import sys
@@ -67,11 +66,27 @@ def count_mismatches(seq1, seq2):
     """Count mismatches between two sequences"""
     return sum(1 for a, b in zip(seq1, seq2) if a != b)
 
-def is_primer_region_suitable(sequences, max_mismatches=6):
+def count_mismatches_by_position(seq1, seq2):
+    """Count mismatches and return positions"""
+    mismatches = []
+    for i, (a, b) in enumerate(zip(seq1, seq2)):
+        if a != b:
+            mismatches.append(i)
+    return mismatches
+
+def is_primer_region_suitable(sequences, max_allowed_positions = 6):
     """
-    Check if primer region is suitable for RPA
-    Allows up to 6 mismatches total across all sequences
+    Check if primer region is suitable for RPA - BIOLOGICALLY ACCURATE
+    - Evaluate primer region suitability using per-position mismatch counting:
+    - A position is considered a mismatch if any genome disagrees with the consensus.
+    - Counts how many positions have at least one mismatch.
+    - Enforces max mismatched positions (e.g. ≤6)
+    - Rejects gaps, Ns, poor GC content, and homopolymers.
+    - No mismatches in last 3 bases (3' end critical for RPA)
+    - Basic quality checks for consensus
     """
+    length = len(sequences[0])
+
     if not sequences or len(sequences) < 2:
         return False
     
@@ -82,21 +97,38 @@ def is_primer_region_suitable(sequences, max_mismatches=6):
     
     # Get consensus sequence
     consensus = get_consensus(sequences)
-    if not consensus:
+    if not consensus or len(consensus) < 30:
         return False
     
-    # Count total mismatches across all sequences
-    total_mismatches = 0
-    for seq in sequences:
-        mismatches = count_mismatches(seq, consensus)
-        total_mismatches += mismatches
-        # Early exit if too many mismatches
-        if total_mismatches > max_mismatches:
+    # Count total mismatch positions (if any genome disagrees at position i, count 1 mismatch)
+    mismatch_positions = 0
+    for i in range(length):
+        consensus_base = consensus[i]
+        for seq in sequences:
+            if seq[i] != consensus_base:
+                mismatch_positions += 1
+                break  # Count once per position
+        if mismatch_positions > max_allowed_positions:
+            return False
+
+    # 3' end (last 3 bases): no mismatches allowed
+    for i in range(length - 3, length):
+        base = consensus[i]
+        if any(seq[i] != base for seq in sequences):
+            return False
+
+    # 5' end (first 5 bases): allow max 1 mismatch across 5 positions
+    five_prime_mismatches = 0
+    for i in range(5):
+        base = consensus[i]
+        if any(seq[i] != base for seq in sequences):
+            five_prime_mismatches += 1
+        if five_prime_mismatches > 1:
             return False
     
     # Basic quality checks for consensus
     gc_content = gc_fraction(consensus) * 100
-    if gc_content < 20 or gc_content > 80:  # Relaxed for initial screening
+    if gc_content < 30 or gc_content > 70:  # Relaxed for initial screening
         return False
     
     # Check for extreme homopolymers (6+ bases)
@@ -105,7 +137,7 @@ def is_primer_region_suitable(sequences, max_mismatches=6):
     
     return True
 
-def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max=70):
+def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max=50):
     """
     Extract 100% conserved targets with suitable primer regions
     """
@@ -121,6 +153,10 @@ def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max
         
         sequences = list(block.values())
         genome_names = list(block.keys())
+
+        if len(sequences) < 15:
+            print(f"  Skipping block {block_id}: only {len(sequences)} genomes (need 15)")
+            continue
         
         if len(sequences) < 2:
             continue
@@ -143,8 +179,8 @@ def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max
             target_seq = target_seqs[0]
 
             found_valid_flanks = False
-            for left_len in range(flank_min, flank_max + 1):
-                for right_len in range(flank_min, flank_max + 1):
+            for left_len in range(flank_max, flank_min - 1, -1):
+                for right_len in range(flank_max, flank_min - 1, -1):
                     start = pos - left_len
                     end = pos + target_size + right_len
                     if start < 0 or end > min_length:
@@ -155,10 +191,10 @@ def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max
                     if is_primer_region_suitable(left_flank) and is_primer_region_suitable(right_flank):
                         left_consensus = get_consensus(left_flank)
                         right_consensus = get_consensus(right_flank)
-                        left_mismatches = sum(count_mismatches(seq, left_consensus) for seq in left_flank)
-                        right_mismatches = sum(count_mismatches(seq, right_consensus) for seq in right_flank)
-
-                        candidates.append({
+                        left_mismatches_per_genome = [count_mismatches(seq, left_consensus) for seq in left_flank]
+                        right_mismatches_per_genome = [count_mismatches(seq, right_consensus) for seq in right_flank]
+                        
+                        candidate = {
                             'block_id': block_id,
                             'position': pos,
                             'target_sequence': target_seq,
@@ -167,14 +203,18 @@ def extract_conserved_targets(xmfa_file, target_size=18, flank_min=30, flank_max
                             'right_region_consensus': right_consensus,
                             'left_region_gc': round(gc_fraction(left_consensus) * 100, 1),
                             'right_region_gc': round(gc_fraction(right_consensus) * 100, 1),
-                            'left_region_mismatches': left_mismatches,
-                            'right_region_mismatches': right_mismatches,
-                            'total_mismatches': left_mismatches + right_mismatches,
+                            'left_max_mismatches': max(left_mismatches_per_genome),
+                            'right_max_mismatches': max(right_mismatches_per_genome),
+                            'left_avg_mismatches': round(sum(left_mismatches_per_genome) / len(left_mismatches_per_genome), 2),
+                            'right_avg_mismatches': round(sum(right_mismatches_per_genome) / len(right_mismatches_per_genome), 2),
+                            'total_max_mismatches': max(left_mismatches_per_genome) + max(right_mismatches_per_genome),
                             'flank_left': left_len,
                             'flank_right': right_len,
                             'genome_count': len(sequences),
-                            'genome_names': '|'.join(genome_names[:3]) + ('|...' if len(genome_names) > 3 else '')
-                        })
+                            'genome_names': '|'.join(genome_names[:3]) + ('|...' if len(genome_names) > 3 else ''),
+                            'primer_quality_score': (left_len + right_len) + max(left_mismatches_per_genome) + max(right_mismatches_per_genome)  # Lower is better
+                        }
+                        candidates.append(candidate)
                         found_valid_flanks = True
                         break
                 if found_valid_flanks:
@@ -208,7 +248,7 @@ def main():
     
     # Sort by quality metrics
     df = pd.DataFrame(candidates)
-    df = df.sort_values(['total_mismatches', 'target_gc', 'genome_count'], 
+    df = df.sort_values(['total_max_mismatches', 'target_gc', 'genome_count'], 
                        ascending=[True, False, False])
     
     # Export results
@@ -218,7 +258,7 @@ def main():
     
     # Summary statistics
     unique_targets = df['target_sequence'].nunique()
-    avg_mismatches = df['total_mismatches'].mean()
+    avg_mismatches = df['total_max_mismatches'].mean()
     
     print(f"Summary:")
     print(f"  Unique target sequences: {unique_targets}")
@@ -231,9 +271,9 @@ def main():
     print("=" * 100)
     for _, row in df.head().iterrows():
         print(f"Target: {row['target_sequence']} (GC: {row['target_gc']}%, Genomes: {row['genome_count']})")
-        print(f"  Left region:  {row['left_region_consensus'][:30]}... (mismatches: {row['left_region_mismatches']})")
-        print(f"  Right region: {row['right_region_consensus'][:30]}... (mismatches: {row['right_region_mismatches']})")
-        print(f"  Total mismatches: {row['total_mismatches']}")
+        print(f"  Left region:  {row['left_region_consensus'][:30]}... (mismatches: {row['left_max_mismatches']})")
+        print(f"  Right region: {row['right_region_consensus'][:30]}... (mismatches: {row['right_max_mismatches']})")
+        print(f"  Total mismatches: {row['total_max_mismatches']}")
         print()
 
 if __name__ == "__main__":

@@ -51,10 +51,9 @@ rule all:
         "results/parsnp_Borrelia/parsnp/parsnp.xmfa",
         "results/parsnp_Borrelia/parsnp/parsnp.tree",
         "results/rpa/candidates.csv",
-        "results/rpa/validated_primers.csv",
-        "results/rpa/validated_primers_targets.fasta",
-        "results/rpa/validated_primers_primers.fasta"
-
+        "results/rpa/RPA_primers.csv",
+        "results/rpa/RPA_primers_valid_only.csv",
+        "results/rpa/contamination_check/synthesis_ready_primers.csv"
 rule parsnp:
     input:
         reference_genome = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/Borrelia/B_afzelii_Tom3107/B_afzelii_Tom3107.fna",
@@ -100,16 +99,63 @@ rule extract_conserved_targets:
         python scripts/extract_target_primers.py {input.xmfa} {output.csv}
         """
 
-rule validate_rpa_primers:
+rule validate_ultra_strict_rpa_primers:
     input:
         candidates = "results/rpa/candidates.csv"
     output:
-        csv = "results/rpa/validated_primers.csv",
-        targets = "results/rpa/validated_primers_targets.fasta",
-        primers = "results/rpa/validated_primers_primers.fasta"
-    params:
-        tempdir = "results/rpa/temp_primedrpa"
+        primers = "results/rpa/RPA_primers.csv",
+        valid_primers = "results/rpa/RPA_primers_valid_only.csv"
+    conda: "envs/target_search.yaml"
     shell:
         """
-        python scripts/validate_primers.py {input.candidates} {output.csv} {params.tempdir}
+        # Use validate_primers.py script (the ultra-strict validator)
+        python scripts/validate_primers.py {input.candidates} {output.primers}
+        """
+
+rule create_contamination_db:
+    input:
+        contaminant_genomes = expand(
+            "/scratch/lustre/home/vira9982/Borreliella_target/genomes/contaminants/{genus}/{sample}.fna",
+            zip,
+            genus=[contaminants[sample] for sample in contaminants.keys()],
+            sample=contaminants.keys()
+        )
+    output:
+        combined_db = "results/rpa/contamination_db/contaminants.fasta",
+        blast_db = "results/rpa/contamination_db/contaminants.ndb"
+    params:
+        db_prefix = "results/rpa/contamination_db/contaminants"
+    conda: "envs/target_search.yaml"
+    shell:
+        """
+        mkdir -p results/rpa/contamination_db
+        
+        # Combine all contaminant genomes
+        cat {input.contaminant_genomes} > {output.combined_db}
+        
+        # Create BLAST database
+        makeblastdb -in {output.combined_db} -dbtype nucl -out {params.db_prefix}
+        """
+
+rule check_ultra_strict_contamination:
+    input:
+        # Use the main output from validate_primers.py (contains all primers)
+        valid_primers = "results/rpa/RPA_primers_valid_only.csv",
+        blast_db = "results/rpa/contamination_db/contaminants.ndb"
+    output:
+        synthesis_ready = "results/rpa/contamination_check/synthesis_ready_primers.csv"
+    params:
+        output_dir = "results/rpa/contamination_check",
+        db_prefix = "results/rpa/contamination_db/contaminants",
+        temp_work_dir = "/tmp/blast_contamination_work_$$"
+    conda: "envs/target_search.yaml"
+    shell:
+        """
+        # Use simple_contamination_check.py script
+        mkdir -p {params.output_dir}
+        python scripts/simple_contamination_check.py \
+            --input {input.valid_primers} \
+            --database {params.db_prefix} \
+            --output {output.synthesis_ready} \
+            --work-dir {params.temp_work_dir} \
         """
