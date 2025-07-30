@@ -1,0 +1,84 @@
+import os
+
+RICKETTSIA_GENOMES_DIR = "/scratch/lustre/home/vira9982/Borreliella_target/genomes/Rickettsia/"
+
+RICKETTSIA_SPECIES = [
+    os.path.splitext(f)[0]
+    for f in os.listdir(RICKETTSIA_GENOMES_DIR)
+    if f.endswith(".fna")
+]
+
+RICKETTSIA_REFERENCE_GENOME = RICKETTSIA_SPECIES[0] if RICKETTSIA_SPECIES else None
+
+if not RICKETTSIA_REFERENCE_GENOME:
+    raise Exception(f"Nerasta .fna failų {RICKETTSIA_GENOMES_DIR} kataloge. Patikrinkite kelią ir failų plėtinius.")
+
+OUTPUT_ROOT_DIR = "results/"
+PROKKA_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}prokka_annotations/"
+PROKKA_GFF_FILES = expand(
+    f"{PROKKA_OUTPUT_DIR}{{species}}/{{species}}.gff",
+    species=RICKETTSIA_SPECIES
+)
+ROARY_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}roary_pangenome/"
+ROARY_CORE_GENE_ALIGNMENT = f"{ROARY_OUTPUT_DIR}core_gene_alignment.aln"
+
+rule all:
+    input:
+        ROARY_CORE_GENE_ALIGNMENT
+
+rule prokka:
+    """
+    Annotates a single Rickettsia genome using Prokka.
+    This rule will be executed for each genome individually.
+    """
+    input:
+        genome = f"{RICKETTSIA_GENOMES_DIR}{{species}}.fna"
+    output:
+        gff = f"{PROKKA_OUTPUT_DIR}{{species}}/{{species}}.gff",
+        faa = f"{PROKKA_OUTPUT_DIR}{{species}}/{{species}}.faa",
+        ffn = f"{PROKKA_OUTPUT_DIR}{{species}}/{{species}}.ffn"
+    params:
+        outdir = f"{PROKKA_OUTPUT_DIR}{{species}}",
+        prefix = "{species}"
+    threads: 4
+    conda: "envs/target_search.yaml"
+    shell:
+        """
+        mkdir -p {params.outdir}
+        rm -rf {params.outdir}/*
+
+        prokka \\
+            --force \\
+            --outdir {params.outdir} \\
+            --prefix {params.prefix} \\
+            --genus Rickettsia \\
+            --usegenus \\
+            --cpus {threads} \\
+            {input.genome}
+        """
+
+rule roary:
+    """
+    Performs pangenome analysis on all Prokka-annotated genomes using Roary.
+    This rule will run once after all genomes are annotated.
+    """
+    input:
+        gff_files = PROKKA_GFF_FILES
+    output:
+        core_alignment = ROARY_CORE_GENE_ALIGNMENT,
+        gene_presence_absence = f"{ROARY_OUTPUT_DIR}gene_presence_absence.csv",
+        pan_genome_reference = f"{ROARY_OUTPUT_DIR}pan_genome_reference.fa",
+        summary_statistics = f"{ROARY_OUTPUT_DIR}summary_statistics.txt"
+    params:
+        output_dir = ROARY_OUTPUT_DIR
+    threads: 8
+    conda: "envs/target_search.yaml"
+    shell:
+        """
+        mkdir -p {params.output_dir}
+        rm -rf {params.output_dir}/*
+
+        roary -f {params.output_dir} -p {threads} -e -n -v {input.gff_files}
+        
+        echo "Roary finished. Check results in {params.output_dir}"
+        """

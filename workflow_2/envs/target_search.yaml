@@ -1,0 +1,17 @@
+# envs/prokka_env.yaml
+name: prokka_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10         # Your required Python version
+  - prokka=1.14.6       # Let's try the latest prokka, as it might handle perl better now
+  - blast=2.15.0        # Blast is often used by prokka
+  - roary
+  - biopython           # For later scripting needs
+  - numpy               # Common dependency
+  - pandas              # Common dependency
+  - primedrpa           # Your specific tools
+  - primer3-py          # Your specific tools
+  - mamba               # Good to have mamba in all envs for troubleshooting
