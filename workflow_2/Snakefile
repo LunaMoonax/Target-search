@@ -19,12 +19,16 @@ PROKKA_GFF_FILES = expand(
     f"{PROKKA_OUTPUT_DIR}{{species}}/{{species}}.gff",
     species=RICKETTSIA_SPECIES
 )
-ROARY_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}roary_pangenome/"
-ROARY_CORE_GENE_ALIGNMENT = f"{ROARY_OUTPUT_DIR}core_gene_alignment.aln"
+PANAROO_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}panaroo_pangenome/"
+PANAROO_CORE_GENE_ALIGNMENT = f"{PANAROO_OUTPUT_DIR}core_gene_alignment.aln"
+MAUVE_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}mauve_alignment/"
+MAUVE_ALIGNMENT_FILE = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.mauve"
+RICKETTSIA_GENOME_FILES = expand(f"{RICKETTSIA_GENOMES_DIR}{{species}}.fna", species=RICKETTSIA_SPECIES)
 
 rule all:
     input:
-        ROARY_CORE_GENE_ALIGNMENT
+        PANAROO_CORE_GENE_ALIGNMENT,
+        MAUVE_ALIGNMENT_FILE
 
 rule prokka:
     """
@@ -41,7 +45,7 @@ rule prokka:
         outdir = f"{PROKKA_OUTPUT_DIR}{{species}}",
         prefix = "{species}"
     threads: 4
-    conda: "envs/target_search.yaml"
+    conda: "envs/prokka_env.yaml"
     shell:
         """
         mkdir -p {params.outdir}
@@ -57,28 +61,67 @@ rule prokka:
             {input.genome}
         """
 
-rule roary:
+rule panaroo:
     """
-    Performs pangenome analysis on all Prokka-annotated genomes using Roary.
-    This rule will run once after all genomes are annotated.
+    Performs pangenome analysis on all Prokka-annotated genomes using Panaroo.
+    Panaroo is a modern alternative to Roary with better error correction.
     """
     input:
         gff_files = PROKKA_GFF_FILES
     output:
-        core_alignment = ROARY_CORE_GENE_ALIGNMENT,
-        gene_presence_absence = f"{ROARY_OUTPUT_DIR}gene_presence_absence.csv",
-        pan_genome_reference = f"{ROARY_OUTPUT_DIR}pan_genome_reference.fa",
-        summary_statistics = f"{ROARY_OUTPUT_DIR}summary_statistics.txt"
+        core_alignment = PANAROO_CORE_GENE_ALIGNMENT,
+        gene_presence_absence = f"{PANAROO_OUTPUT_DIR}gene_presence_absence.csv",
+        pan_genome_reference = f"{PANAROO_OUTPUT_DIR}pan_genome_reference.fa",
+        summary_statistics = f"{PANAROO_OUTPUT_DIR}summary_statistics.txt",
+        core_gene_alignment_filtered = f"{PANAROO_OUTPUT_DIR}core_gene_alignment_filtered.aln"
     params:
-        output_dir = ROARY_OUTPUT_DIR
+        output_dir = PANAROO_OUTPUT_DIR
     threads: 8
-    conda: "envs/target_search.yaml"
+    conda: "envs/panaroo_env.yaml" 
     shell:
         """
         mkdir -p {params.output_dir}
         rm -rf {params.output_dir}/*
 
-        roary -f {params.output_dir} -p {threads} -e -n -v {input.gff_files}
+        panaroo -i {input.gff_files} \\
+                -o {params.output_dir} \\
+                --threads {threads} \\
+                -a core \\
+                --aligner mafft \\
+                --core_threshold 0.95 \\
+                --len_dif_percent 0.98 \\
+                --merge_paralogs \\
+                --clean-mode strict
         
-        echo "Roary finished. Check results in {params.output_dir}"
+        echo "Panaroo finished. Check results in {params.output_dir}"
+        """
+
+rule progressive_mauve:
+    """
+    Performs Whole Genome Alignment on all Rickettsia genomes using progressiveMauve.
+    """
+    input:
+        genomes = RICKETTSIA_GENOME_FILES
+    output:
+        alignment = MAUVE_ALIGNMENT_FILE,
+        backbone = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.backbone",
+        sslist = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.sslist"
+    params:
+        outdir = MAUVE_OUTPUT_DIR,
+        output_prefix = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment"
+    threads: 8
+    conda: "envs/mauve_env.yaml"
+    shell:
+        """
+        mkdir -p {params.outdir}
+
+        progressiveMauve \\
+            --output={output.alignment} \\
+            --backbone-output={output.backbone} \\
+            --match-input \\
+            {input.genomes}
+
+        # Patikrinkite ar sukurti failai
+        echo "Mauve alignment finished. Files created:"
+        ls -la {params.outdir}
         """

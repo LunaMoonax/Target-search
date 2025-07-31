@@ -1,0 +1,8 @@
+# envs/mauve_env.yaml
+name: mauve_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - mauve

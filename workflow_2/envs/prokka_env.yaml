@@ -1,0 +1,11 @@
+# envs/prokka_env.yaml
+name: prokka_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - prokka=1.14.6
+  - python=3.10
+  - blast=2.15.0
+  - mamba

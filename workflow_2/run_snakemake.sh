@@ -7,4 +7,4 @@ source ~/miniconda3/etc/profile.d/conda.sh
 
 conda activate target_search
 
-snakemake -p all --use-conda --cores 10 --latency-wait 60
+snakemake -p all --use-conda --cores 10 --latency-wait 60 --conda-frontend mamba --conda-prefix .snakemake/conda

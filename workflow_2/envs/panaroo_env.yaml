@@ -1,0 +1,10 @@
+# envs/panaroo_env.yaml
+name: panaroo_env
+channels:
+  - nodefaults
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11     # Moderni Python versija
+  - panaroo=1.4.1   # SVARBU: Naujausia stabili versija su atnaujintomis priklausomybėmis
+  - mafft
