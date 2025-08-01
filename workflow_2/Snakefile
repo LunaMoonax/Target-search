@@ -8,7 +8,7 @@ RICKETTSIA_SPECIES = [
     if f.endswith(".fna")
 ]
 
-RICKETTSIA_REFERENCE_GENOME = RICKETTSIA_SPECIES[0] if RICKETTSIA_SPECIES else None
+RICKETTSIA_REFERENCE_GENOME = "Rickettsia_prowazekii"
 
 if not RICKETTSIA_REFERENCE_GENOME:
     raise Exception(f"Nerasta .fna failų {RICKETTSIA_GENOMES_DIR} kataloge. Patikrinkite kelią ir failų plėtinius.")
@@ -21,14 +21,15 @@ PROKKA_GFF_FILES = expand(
 )
 PANAROO_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}panaroo_pangenome/"
 PANAROO_CORE_GENE_ALIGNMENT = f"{PANAROO_OUTPUT_DIR}core_gene_alignment.aln"
-MAUVE_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}mauve_alignment/"
-MAUVE_ALIGNMENT_FILE = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.mauve"
-RICKETTSIA_GENOME_FILES = expand(f"{RICKETTSIA_GENOMES_DIR}{{species}}.fna", species=RICKETTSIA_SPECIES)
+PARSNP_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}parsnp_Rickettsia"
+
 
 rule all:
     input:
-        PANAROO_CORE_GENE_ALIGNMENT,
-        MAUVE_ALIGNMENT_FILE
+        f"{PANAROO_OUTPUT_DIR}gene_presence_absence.csv",
+        f"{PANAROO_OUTPUT_DIR}summary_statistics.txt",
+        f"{PARSNP_OUTPUT_DIR}/output/parsnp.xmfa",
+        f"{PANAROO_OUTPUT_DIR}partitioned_alignment.fasta"
 
 rule prokka:
     """
@@ -88,40 +89,51 @@ rule panaroo:
                 --threads {threads} \\
                 -a core \\
                 --aligner mafft \\
-                --core_threshold 0.95 \\
-                --len_dif_percent 0.98 \\
-                --merge_paralogs \\
+                --core_threshold 0.90 \\
                 --clean-mode strict
         
         echo "Panaroo finished. Check results in {params.output_dir}"
         """
 
-rule progressive_mauve:
+rule parsnp:
     """
-    Performs Whole Genome Alignment on all Rickettsia genomes using progressiveMauve.
+    Atlieka greitą branduolio genomo SNP sulyginimą su Parsnp.
+    Patikima versija su atskirtais katalogais ir --force-overwrite vėliavėle.
     """
     input:
-        genomes = RICKETTSIA_GENOME_FILES
+        reference_genome = f"{RICKETTSIA_GENOMES_DIR}{RICKETTSIA_REFERENCE_GENOME}.fna",
+        other_genomes = expand(
+            f"{RICKETTSIA_GENOMES_DIR}{{species}}.fna",
+            species=[s for s in RICKETTSIA_SPECIES if s != RICKETTSIA_REFERENCE_GENOME]
+        )
     output:
-        alignment = MAUVE_ALIGNMENT_FILE,
-        backbone = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.backbone",
-        sslist = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment.sslist"
+        # Rezultatai bus /output/ pakatalogiuose
+        xmfa = f"{PARSNP_OUTPUT_DIR}/output/parsnp.xmfa",
+        tree = f"{PARSNP_OUTPUT_DIR}/output/parsnp.tree",
+        ggr = f"{PARSNP_OUTPUT_DIR}/output/parsnp.ggr"
     params:
-        outdir = MAUVE_OUTPUT_DIR,
-        output_prefix = f"{MAUVE_OUTPUT_DIR}rickettsia_alignment"
+        # Svarbiausia dalis: išvesties ir įvesties katalogai yra atskiri
+        output_dir = f"{PARSNP_OUTPUT_DIR}/output",
+        genomes_dir = f"{PARSNP_OUTPUT_DIR}/genome_links"
     threads: 8
-    conda: "envs/mauve_env.yaml"
+    conda: "envs/parsnp_env.yaml"
     shell:
         """
-        mkdir -p {params.outdir}
+        # Sukuriame katalogą simbolinėms nuorodoms ir išvalome senas
+        mkdir -p {params.genomes_dir}
+        find {params.genomes_dir} -type l -delete
 
-        progressiveMauve \\
-            --output={output.alignment} \\
-            --backbone-output={output.backbone} \\
-            --match-input \\
-            {input.genomes}
+        # Sukuriame simbolines nuorodas
+        for genome in {input.other_genomes}; do
+            ln -sf $(realpath "$genome") {params.genomes_dir}/
+        done
 
-        # Patikrinkite ar sukurti failai
-        echo "Mauve alignment finished. Files created:"
-        ls -la {params.outdir}
+        # Paleidžiame Parsnp su --force-overwrite vėliavėle
+        # ir atskirais katalogais.
+        parsnp -r {input.reference_genome} \\
+               -d {params.genomes_dir} \\
+               -p {threads} \\
+               -o {params.output_dir} \\
+               --skip-ani-filter \\
+               --force-overwrite
         """

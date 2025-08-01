@@ -1,8 +1,9 @@
-# envs/mauve_env.yaml
-name: mauve_env
+# envs/parsnp_env.yaml
+name: parsnp_env
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - mauve
+  - parsnp = 2.*
+  - blast
