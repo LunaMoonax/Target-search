@@ -8,3 +8,6 @@ dependencies:
   - python=3.11     # Moderni Python versija
   - panaroo=1.4.1   # SVARBU: Naujausia stabili versija su atnaujintomis priklausomybėmis
   - mafft
+  - pandas
+  - biopython
+  

@@ -26,10 +26,11 @@ PARSNP_OUTPUT_DIR = f"{OUTPUT_ROOT_DIR}parsnp_Rickettsia"
 
 rule all:
     input:
-        f"{PANAROO_OUTPUT_DIR}gene_presence_absence.csv",
-        f"{PANAROO_OUTPUT_DIR}summary_statistics.txt",
-        f"{PARSNP_OUTPUT_DIR}/output/parsnp.xmfa",
-        f"{PANAROO_OUTPUT_DIR}partitioned_alignment.fasta"
+        #f"{PANAROO_OUTPUT_DIR}gene_presence_absence.csv",
+        #f"{PANAROO_OUTPUT_DIR}summary_statistics.txt",
+        #f"{PARSNP_OUTPUT_DIR}/output/parsnp.xmfa",
+        #"results/variable_targets.csv",
+        "results/rpa_primers.csv"
 
 rule prokka:
     """
@@ -136,4 +137,40 @@ rule parsnp:
                -o {params.output_dir} \\
                --skip-ani-filter \\
                --force-overwrite
+        """
+
+rule find_variable_targets:
+    """
+    Naudoja find_variable_targets.py skriptą, kad rastų 18 nt sritis,
+    kurių panašumas tarp genomų yra apie 70%.
+    """
+    input:
+        partitioned_alignment = f"{PANAROO_OUTPUT_DIR}partitioned_alignment.fasta"
+    output:
+        candidates_csv = "results/variable_targets.csv"
+    conda: "envs/panaroo_env.yaml" # Tariame, kad čia yra pandas ir biopython
+    shell:
+        """
+        python scripts/find_variable_targets.py \\
+            {input.partitioned_alignment} \\
+            {output.candidates_csv}
+        """
+
+rule design_rpa_primers:
+    """
+    Naudoja rpa_primer_designer.py skriptą, kad sukurtų pradmenų poras
+    rastoms kintančioms sritims.
+    """
+    input:
+        targets_csv = "results/variable_targets.csv",
+        alignment_fasta = f"{PANAROO_OUTPUT_DIR}partitioned_alignment.fasta"
+    output:
+        primers_csv = "results/rpa_primers.csv"
+    conda: "envs/panaroo_env.yaml"
+    shell:
+        """
+        python scripts/rpa_primer_designer.py \\
+            {input.targets_csv} \\
+            {input.alignment_fasta} \\
+            {output.primers_csv}
         """
