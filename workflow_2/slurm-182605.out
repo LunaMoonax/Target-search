@@ -1,0 +1,47 @@
+Support for alternative conda frontends has been deprecated in favor of simpler support and code base. This should not cause issues since current conda releases rely on fast solving via libmamba. Ignoring the alternative conda frontend setting (mamba).
+Assuming unrestricted shared filesystem usage.
+host: node-31
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job stats:
+job                count
+---------------  -------
+all                    1
+generate_report        1
+total                  2
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Sun Aug  3 21:29:30 2025]
+localrule generate_report:
+    input: results/top_primers.csv, results/panaroo_pangenome/partitioned_alignment.fasta
+    output: results/final_primer_report.csv
+    jobid: 1
+    reason: Missing output files: results/final_primer_report.csv
+    resources: tmpdir=/tmp/slurm-vira9982-182605
+Shell command: python scripts/generate_final_report.py --primers results/top_primers.csv --alignment results/panaroo_pangenome/partitioned_alignment.fasta --output results/final_primer_report.csv
+Activating conda environment: .snakemake/conda/87bdc09c670f810f9db457762dce438f_
+Analizuojami sulyginimo blokai...
+
+Ataskaita sėkmingai sukurta.
+Rezultatai su visais variantais išsaugoti: results/final_primer_report.csv
+[Sun Aug  3 21:29:34 2025]
+Finished jobid: 1 (Rule: generate_report)
+1 of 2 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Sun Aug  3 21:29:34 2025]
+localrule all:
+    input: results/final_primer_report.csv
+    jobid: 0
+    reason: Input files updated by another job: results/final_primer_report.csv
+    resources: tmpdir=/tmp/slurm-vira9982-182605
+Shell command: None
+[Sun Aug  3 21:29:34 2025]
+Finished jobid: 0 (Rule: all)
+2 of 2 steps (100%) done
+Complete log(s): /scratch/lustre/home/vira9982/Borreliella_target/Borreliella-analysis/workflow_2/.snakemake/log/2025-08-03T212927.137377.snakemake.log

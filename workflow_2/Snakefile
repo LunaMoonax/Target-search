@@ -30,7 +30,11 @@ rule all:
         #f"{PANAROO_OUTPUT_DIR}summary_statistics.txt",
         #f"{PARSNP_OUTPUT_DIR}/output/parsnp.xmfa",
         #"results/variable_targets.csv",
-        "results/rpa_primers.csv"
+        #"results/rpa_primers.csv",
+        #"results/rpa_primers_validated.csv",
+        #"results/top_primers.csv",
+        "results/final_primer_report.csv"
+
 
 rule prokka:
     """
@@ -174,3 +178,41 @@ rule design_rpa_primers:
             {input.alignment_fasta} \\
             {output.primers_csv}
         """
+
+rule validate_primers:
+    """
+    Filtruoja pradmenų kandidatus pagal antrines struktūras, dimerus ir kt.
+    """
+    input:
+        candidates = "results/rpa_primers.csv"
+    output:
+        validated_primers = "results/rpa_primers_validated.csv"
+    conda: "envs/panaroo_env.yaml"
+    shell:
+        """
+        python scripts/validate_primers_comprehensive.py \\
+            {input.candidates} \\
+            {output.validated_primers}
+        """
+
+rule select_top_primers:
+    """
+    Išrenka po vieną geriausią pradmenų porą kiekvienai unikaliai taikinio pozicijai.
+    """
+    input:
+        validated_primers = "results/rpa_primers_validated.csv"
+    output:
+        top_primers = "results/top_primers.csv"
+    conda: "envs/panaroo_env.yaml"
+    shell:
+        "python scripts/select_top_primers.py {input.validated_primers} {output.top_primers}"
+
+rule generate_report:
+    input:
+        top_primers = "results/top_primers.csv",
+        alignment = f"{PANAROO_OUTPUT_DIR}partitioned_alignment.fasta"
+    output:
+        final_report = "results/final_primer_report.csv"
+    conda: "envs/panaroo_env.yaml"
+    shell:
+        "python scripts/generate_final_report.py --primers {input.top_primers} --alignment {input.alignment} --output {output.final_report}"
